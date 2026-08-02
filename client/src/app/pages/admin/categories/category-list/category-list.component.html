@@ -1,0 +1,56 @@
+<div class="admin-container">
+  <div class="admin-breadcrumb mb-2">
+    <a routerLink="/admin/dashboard" class="text-cyan font-bold">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="text-gray">Categories</span>
+  </div>
+
+  <div class="flex justify-between items-center mb-3">
+    <h1 class="mb-0">Manage Categories</h1>
+  </div>
+
+  <div class="admin-card max-width-700 mb-3">
+    <h3>Add New Category</h3>
+    <div class="flex gap-2 items-center">
+      <input type="text" [(ngModel)]="newCategoryName" placeholder="Category Name" class="form-control flex-1">
+      <button class="btn btn-cyan" (click)="addCategory()" [disabled]="saving || !newCategoryName.trim()">Add Category</button>
+    </div>
+  </div>
+
+  <div class="admin-card max-width-700">
+    <div *ngIf="loading" class="text-center py-3">Loading categories...</div>
+    <table class="admin-table w-full" *ngIf="!loading">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cat of categories">
+          <td>{{ cat.id }}</td>
+          <td>
+            <ng-container *ngIf="editingId !== cat.id">{{ cat.name }}</ng-container>
+            <input *ngIf="editingId === cat.id" type="text" [(ngModel)]="editCategoryName" class="form-control">
+          </td>
+          <td class="text-right">
+            <div class="flex gap-1 justify-end">
+              <ng-container *ngIf="editingId !== cat.id">
+                <button class="btn-icon btn-edit" (click)="startEdit(cat)">✏️</button>
+                <button class="btn-icon btn-delete" (click)="deleteCategory(cat.id)">🗑</button>
+              </ng-container>
+              <ng-container *ngIf="editingId === cat.id">
+                <button class="btn btn-sm btn-cyan" (click)="saveEdit(cat)">Save</button>
+                <button class="btn btn-sm btn-outline" (click)="cancelEdit()">Cancel</button>
+              </ng-container>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="categories.length === 0">
+          <td colspan="3" class="text-center py-2 text-gray">No categories found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

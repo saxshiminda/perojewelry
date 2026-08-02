@@ -1,0 +1,60 @@
+<div class="admin-container">
+  <div class="admin-breadcrumb mb-2">
+    <a routerLink="/admin/dashboard" class="text-cyan font-bold">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="text-gray">Blogs</span>
+  </div>
+
+  <div class="flex justify-between items-center mb-3">
+    <h1 class="mb-0">Manage Blog Posts</h1>
+    <a routerLink="/admin/blogs/new" class="btn btn-cyan font-bold">➕ Add New Post</a>
+  </div>
+
+  <div class="admin-card max-width-1200">
+    <div *ngIf="loading" class="text-center py-3">
+      Loading blogs...
+    </div>
+
+    <table class="admin-table w-full" *ngIf="!loading">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cover Image</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let post of posts">
+          <td>{{ post.id }}</td>
+          <td>
+            <img *ngIf="post.image_url" [src]="post.image_url" alt="Blog Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+            <span *ngIf="!post.image_url" class="text-gray italic">No image</span>
+          </td>
+          <td class="font-bold">{{ post.title }}</td>
+          <td>{{ post.category || 'Uncategorized' }}</td>
+          <td>
+            <span class="badge" [class.bg-green]="post.published" [class.bg-gray]="!post.published" class="text-white p-1 radius-sm">
+              {{ post.published ? 'Published' : 'Draft' }}
+            </span>
+          </td>
+          <td>{{ post.created_at | date:'mediumDate' }}</td>
+          <td class="text-right">
+            <div class="flex gap-1 justify-end">
+              <a [routerLink]="['/admin/blogs/edit', post.id]" class="btn-icon btn-edit" title="Edit">✏️</a>
+              <button class="btn-icon btn-delete" (click)="deletePost(post.id)" title="Delete">🗑</button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="posts.length === 0">
+          <td colspan="7" class="text-center py-4 text-gray">
+            No blog posts found. <a routerLink="/admin/blogs/new" class="text-cyan font-bold hover-cyan">Create one now!</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

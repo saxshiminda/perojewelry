@@ -1,0 +1,26 @@
+<div class="product-card" (click)="goToProduct()">
+  <div class="card-image">
+    @if (product.is_on_sale) {
+      <span class="sale-badge badge">SALE</span>
+    }
+    <div class="actions">
+      <button class="icon-btn" aria-label="Favorite" (click)="toggleFavorite($event)">
+        {{ isFavorite ? '❤️' : '♡' }}
+      </button>
+      <button class="icon-btn" aria-label="Add to cart" (click)="addToCart($event)">+</button>
+    </div>
+    <img [src]="product.primary_image_url" [alt]="product.name">
+  </div>
+  <div class="card-content">
+    <h3 class="product-title"><a [routerLink]="['/product', product.id]">{{ product.name }}</a></h3>
+    <div class="product-price">
+      @if (product.is_on_sale) {
+        <span class="price text-cyan">${{ product.sale_price | number:'1.2-2' }}</span>
+        <span class="price-old">${{ product.price | number:'1.2-2' }}</span>
+      } @else {
+        <span class="price text-cyan">${{ product.price | number:'1.2-2' }}</span>
+      }
+    </div>
+    <p class="product-description text-gray">{{ product.description }}</p>
+  </div>
+</div>

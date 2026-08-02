@@ -1,0 +1,71 @@
+<div class="admin-container">
+  <div class="admin-breadcrumb mb-1">
+    <a routerLink="/admin/dashboard" class="text-cyan font-bold">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="text-gray">Products</span>
+  </div>
+  <div class="flex justify-between items-center mb-2">
+    <h1>Product Management</h1>
+    <a routerLink="/admin/products/new" class="btn btn-cyan">Add New Piece</a>
+  </div>
+
+  <div class="admin-card mb-2">
+    <div class="flex gap-2 flex-wrap items-center">
+      <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search products..." class="form-control flex-1" style="min-width: 200px;">
+      <select [(ngModel)]="categoryId" (change)="onCategoryChange()" class="form-control" style="width: 200px;">
+        <option value="">All Categories</option>
+        <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+      </select>
+      <button class="btn btn-cyan" (click)="onSearch()">Search</button>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <div *ngIf="loading" class="text-center py-3">
+      <span class="loading-spinner"></span> Loading pieces...
+    </div>
+
+    <table *ngIf="!loading" class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td>{{ product.id }}</td>
+          <td>
+            <img [src]="product.primary_image_url" [alt]="product.name" class="product-thumb">
+          </td>
+          <td class="font-bold">{{ product.name }}</td>
+          <td>{{ product.category?.name || 'N/A' }}</td>
+          <td>${{ product.price }}</td>
+          <td>{{ product.stock }}</td>
+          <td>
+            <div class="flex gap-1">
+              <a [routerLink]="['/admin/products/edit', product.id]" class="btn-icon btn-edit" title="Edit">✏️</a>
+              <button (click)="deleteProduct(product.id)" class="btn-icon btn-delete" title="Delete">🗑️</button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="products.length === 0">
+          <td colspan="7" class="text-center py-3">No products found.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="flex justify-between items-center mt-3" *ngIf="!loading && totalItems > 0">
+      <span class="text-gray text-sm">Showing page {{ currentPage }} of {{ lastPage }} ({{ totalItems }} total)</span>
+      <div class="flex gap-1">
+        <button class="btn btn-outline" [disabled]="currentPage === 1" (click)="prevPage()">Previous</button>
+        <button class="btn btn-outline" [disabled]="currentPage === lastPage" (click)="nextPage()">Next</button>
+      </div>
+    </div>
+  </div>
+</div>

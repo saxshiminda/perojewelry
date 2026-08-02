@@ -1,0 +1,106 @@
+<div class="admin-container">
+  <div class="admin-breadcrumb mb-2">
+    <a routerLink="/" class="text-cyan font-bold">Home</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="text-gray">My Profile</span>
+  </div>
+
+  <h1 class="mt-1 mb-2">Account Settings</h1>
+
+  <div class="profile-grid">
+    <!-- Profile Info Update Card -->
+    <div class="admin-card">
+      <h2 class="mb-2">Profile Information</h2>
+      <div *ngIf="profileMessage" class="alert-box mb-2" [class.success]="profileMessage.includes('successfully')" [class.error]="!profileMessage.includes('successfully')">
+        {{ profileMessage }}
+      </div>
+
+      <form [formGroup]="profileForm" (ngSubmit)="onProfileSubmit()" class="profile-info">
+        <div class="profile-photo-section flex items-center gap-3 mb-3 pb-2">
+          <div class="avatar-large" style="overflow: hidden; cursor: pointer; position: relative; flex-shrink: 0;" (click)="fileInput.click()">
+            <img *ngIf="previewUrl && !imageLoadError" [src]="previewUrl" alt="Profile Image"
+                 (error)="imageLoadError = true"
+                 style="width: 100%; height: 100%; object-fit: cover;">
+            <span *ngIf="!previewUrl || imageLoadError" class="avatar-initial font-bold text-dark">
+              {{ profileForm.get('name')?.value?.charAt(0)?.toUpperCase() || 'U' }}
+            </span>
+            <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+
+            <div class="avatar-overlay text-sm font-bold text-white flex items-center justify-center">
+              📸 Upload
+            </div>
+          </div>
+          <div>
+            <h3 class="mb-1 text-dark" style="font-size: 1.1rem; line-height: 1.1;">Profile Photo</h3>
+            <p class="text-sm text-gray mb-2">Recommended: Square image, at least 256x256px.</p>
+            <div class="flex gap-1 items-center">
+              <button type="button" class="btn btn-outline btn-sm font-bold" (click)="fileInput.click()">Upload Photo</button>
+              <button *ngIf="previewUrl || selectedFile" type="button" class="btn btn-outline btn-sm font-bold text-red" (click)="removePhoto()" style="border-color: transparent;">Remove</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mb-2">
+          <label>Full Name</label>
+          <input type="text" formControlName="name" class="form-input" [class.border-red]="profileForm.get('name')?.invalid && profileForm.get('name')?.touched">
+        </div>
+
+        <div class="form-group mb-2">
+          <label>Email Address</label>
+          <input type="email" formControlName="email" class="form-input" [class.border-red]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+        </div>
+
+        <div class="form-group mb-3">
+          <label>Account Role</label>
+          <div><span class="badge bg-cyan text-white px-2 py-1 radius-sm font-bold">{{ (user$ | async)?.role | uppercase }}</span></div>
+        </div>
+
+        <button type="submit" [disabled]="profileForm.invalid || isSubmittingProfile" class="btn btn-cyan font-bold w-full mt-2">
+          {{ isSubmittingProfile ? 'Saving...' : 'Save Profile Changes' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- Password Update Card -->
+    <div class="admin-card">
+      <h2 class="mb-2">Security Settings</h2>
+
+      <div *ngIf="passwordMessage" class="alert-box success mb-2">
+        {{ passwordMessage }}
+      </div>
+      <div *ngIf="passwordError" class="alert-box error mb-2">
+        {{ passwordError }}
+      </div>
+
+      <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
+        <div class="form-group mb-2">
+          <label>Current Password</label>
+          <input type="password" formControlName="current_password" class="form-input" placeholder="Enter current password">
+        </div>
+
+        <div class="form-group mb-2">
+          <label>New Password</label>
+          <input type="password" formControlName="new_password" class="form-input" placeholder="Min 8 characters">
+        </div>
+
+        <div class="form-group mb-3">
+          <label>Confirm New Password</label>
+          <input type="password" formControlName="new_password_confirmation" class="form-input" placeholder="Repeat new password">
+          <div *ngIf="passwordForm.hasError('mismatch') && passwordForm.get('new_password_confirmation')?.touched" class="text-red text-sm mt-1">
+            Passwords do not match.
+          </div>
+        </div>
+
+        <button type="submit" [disabled]="passwordForm.invalid || isSubmittingPassword" class="btn btn-yellow text-dark font-bold w-full mt-2">
+          {{ isSubmittingPassword ? 'Updating...' : 'Update Password' }}
+        </button>
+      </form>
+
+      <div class="mt-4 bg-light radius-md border-color" style="padding: 20px;">
+        <h4 class="mb-1 text-red">Danger Zone</h4>
+        <p class="text-sm text-gray mb-2">If you wish to permanently delete your account and all associated data, please proceed below.</p>
+        <button type="button" class="btn btn-outline text-red bg-white font-bold w-full p-2" onclick="alert('Contact support to delete account')">Delete Account</button>
+      </div>
+    </div>
+  </div>
+</div>

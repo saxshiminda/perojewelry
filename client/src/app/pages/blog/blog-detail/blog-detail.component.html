@@ -1,0 +1,78 @@
+<div class="page-header py-4 mb-4">
+  <div class="container">
+    <div class="breadcrumb text-sm mb-2 font-bold">
+      <a routerLink="/" class="text-dark hover-cyan">Home</a> / 
+      <a routerLink="/blog" class="text-dark hover-cyan">News</a> / 
+      <span class="text-cyan">{{ post?.title || 'Loading...' }}</span>
+    </div>
+  </div>
+</div>
+
+<div class="container mb-5 flex gap-4">
+  <!-- Main Content -->
+  <div class="blog-content" *ngIf="!loading && post">
+    <article class="post-detail-card">
+      <div class="post-image-container mb-3" style="border-radius: var(--radius-lg); overflow: hidden;">
+          <img [src]="getPostImage(post)" [alt]="post.title" class="w-full" style="max-height: 500px; object-fit: cover;">
+      </div>
+      
+      <div class="post-meta flex items-center gap-2 mb-2 text-sm text-gray">
+         <span class="badge border-badge flex items-center gap-1"><span class="icon">📅</span> {{ post.created_at | date:'longDate' }}</span>
+         <span *ngIf="post.category" class="badge bg-yellow text-dark font-bold">{{ post.category }}</span>
+      </div>
+      
+      <h1 class="post-title mb-3 title-display" style="font-size: 2.5rem; line-height: 1.2;">{{ post.title }}</h1>
+      
+      <div *ngIf="post.excerpt" class="post-excerpt text-gray italic mb-3 p-2 bg-light radius-md" style="border-left: 4px solid var(--primary-cyan);">
+        {{ post.excerpt }}
+      </div>
+      
+      <!-- Formatting newlines with whitespace-pre-wrap -->
+      <div class="post-body text-gray" style="line-height: 1.8; font-size: 1.1rem; white-space: pre-wrap;">
+        {{ post.content }}
+      </div>
+      
+      <!-- Tags and Share -->
+      <div class="mt-4 pt-3 border-top flex justify-between items-center">
+        <div class="tags flex gap-1 items-center">
+          <span class="font-bold">Tags:</span>
+          <a href="#" class="badge bg-light text-dark hover-cyan cursor-pointer">Jewelry</a>
+          <a href="#" class="badge bg-light text-dark hover-cyan cursor-pointer">Chainmail</a>
+        </div>
+        <div class="share flex gap-1 items-center">
+          <span class="font-bold">Share:</span>
+          <button class="btn-icon">🔗</button>
+          <button class="btn-icon">🐦</button>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="blog-content" *ngIf="loading">
+    <div class="text-center py-5">
+      <h2 class="text-cyan">Loading article...</h2>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="widget mb-3 p-3 bg-light radius-md">
+      <h3 class="widget-title font-bold border-bottom pb-1 mb-2">Recent Posts</h3>
+      <div class="flex-col gap-2">
+        <div *ngFor="let rp of recentPosts" class="mini-post flex gap-1 items-center cursor-pointer" [routerLink]="['/blog', rp.id]">
+          <img [src]="getPostImage(rp)" [alt]="rp.title" class="mini-img" style="width:60px; height:60px; object-fit:cover; border-radius:8px;">
+          <div>
+            <h4 class="mb-0 text-sm font-bold"><a class="hover-cyan" style="line-height:1.2;">{{ rp.title }}</a></h4>
+            <span class="text-gray text-xs">{{ rp.created_at | date:'mediumDate' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="promo-banner text-center py-4 px-2 radius-md border-color">
+      <h3 class="title-display text-red mb-1" style="font-size: 1.5rem; line-height: 1.2;">Don't Miss Out!</h3>
+      <p class="text-sm mb-3 text-gray">Check out our latest arrivals and exclusive offers.</p>
+      <a routerLink="/shop" class="btn btn-red text-white text-sm py-1 px-3 w-full">Shop Now</a>
+    </div>
+  </aside>
+</div>

@@ -1,0 +1,108 @@
+<div class="page-header py-4 bg-light mb-4">
+  <div class="container flex justify-between items-end gap-2 flex-wrap">
+    <div>
+      <div class="breadcrumb text-sm mb-2 font-bold">
+        <a routerLink="/" class="text-dark">Home</a> / <span class="text-cyan">Shop</span>
+      </div>
+      <h1 class="title-display mb-0" style="font-size: 2.5rem;">
+        {{ categoryId ? 'Category Products' : (searchQuery ? 'Search Results' : 'All Pieces') }}
+      </h1>
+    </div>
+    
+    <div class="shop-search search-box items-center">
+      <input type="text" placeholder="Search pieces..." [(ngModel)]="searchQuery" (keyup.enter)="onSearchSubmit()">
+      <button class="search-btn" (click)="onSearchSubmit()">🔍</button>
+    </div>
+  </div>
+</div>
+
+<div class="container mb-4 flex gap-4">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="widget mb-3">
+      <h3 class="widget-title font-bold">Product categories</h3>
+      <ul class="cat-list text-gray">
+        <li>
+          <a href="#" (click)="onCategoryClick(undefined, $event)" [class.text-cyan]="!categoryId" class="flex justify-between font-bold">
+            <span>All Categories</span>
+          </a>
+        </li>
+        @for (cat of categories; track cat.id) {
+          <li>
+            <a href="#" (click)="onCategoryClick(cat.id, $event)" [class.text-cyan]="categoryId == cat.id" class="flex justify-between font-bold">
+              <span>+ {{ cat.name }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+    
+    <div class="widget mb-3">
+      <h3 class="widget-title font-bold">Filter by max price</h3>
+      <div class="price-slider mb-2">
+        <input type="range" [min]="absMinPrice" [max]="absMaxPrice" [(ngModel)]="currentMaxPrice" class="w-full">
+      </div>
+      <div class="flex justify-between items-center text-sm mb-3">
+        <span class="font-bold">${{ absMinPrice | number:'1.2-2' }}</span>
+        <span class="text-cyan font-bold">Max: ${{ currentMaxPrice | number:'1.2-2' }}</span>
+      </div>
+      <button class="btn btn-cyan w-full text-center py-2" style="font-size: 1rem; border-radius: 8px;" (click)="onFilterApply()">Apply Filter</button>
+    </div>
+
+    <div class="widget mb-3">
+      <h3 class="widget-title font-bold">Popular products</h3>
+      <div class="flex-col gap-2">
+        @for (prod of popularProducts; track prod.id) {
+          <div class="mini-product flex gap-1 items-center">
+            <img [src]="prod.primary_image_url" [alt]="prod.name" class="mini-img">
+            <div>
+              <h4 class="mb-0 text-sm font-bold"><a [routerLink]="['/product', prod.id]">{{ prod.name }}</a></h4>
+              <span class="text-cyan text-sm font-bold">${{ (prod.effective_price || prod.price) | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="shop-content">
+    <div class="shop-toolbar flex justify-between items-center mb-3">
+      <div class="view-toggles flex gap-1">
+        <button [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')" class="icon-toggle">⊞</button>
+        <button [class.active]="viewMode === 'list'" (click)="setViewMode('list')" class="icon-toggle">⊟</button>
+      </div>
+      <div class="sorting">
+        <select class="sort-select" [(ngModel)]="sortBy" (change)="onSortChange()">
+          <option value="default">Default sorting</option>
+          <option value="price_asc">Sort by price: low to high</option>
+          <option value="price_desc">Sort by price: high to low</option>
+          <option value="newest">Sort by newest</option>
+          <option value="popularity">Sort by popularity</option>
+        </select>
+      </div>
+      <div class="showing-text text-gray text-sm font-bold">
+        Showing {{ products.length }} items ({{ totalItems }} total)
+      </div>
+    </div>
+
+    <div class="products-container" [class.list-view]="viewMode === 'list'">
+      @for (product of products; track product.id) {
+        <app-product-card [product]="product"></app-product-card>
+      }
+      @empty {
+        <div class="text-center py-4 w-full text-gray font-bold">No products found matching your criteria.</div>
+      }
+    </div>
+
+    <div class="pagination flex justify-center gap-1 mt-4" *ngIf="lastPage > 1">
+      <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)"><</button>
+      
+      @for (p of getPagesArray(); track p) {
+        <button class="page-btn" [class.active]="p === currentPage" (click)="goToPage(p)">{{ p }}</button>
+      }
+      
+      <button class="page-btn" [disabled]="currentPage === lastPage" (click)="goToPage(currentPage + 1)">></button>
+    </div>
+  </div>
+</div>

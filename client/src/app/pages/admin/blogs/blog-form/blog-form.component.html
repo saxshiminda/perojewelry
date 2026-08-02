@@ -1,0 +1,115 @@
+<div class="admin-container">
+  <div class="admin-breadcrumb mb-2">
+    <a routerLink="/admin/dashboard" class="text-cyan font-bold">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <a routerLink="/admin/blogs" class="text-cyan font-bold">Blogs</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="text-gray">{{ isEditMode ? 'Edit Post' : 'New Post' }}</span>
+  </div>
+  <h1 class="mt-1 mb-2">{{ isEditMode ? 'Edit Blog Post' : 'Add New Blog Post' }}</h1>
+
+  <div class="admin-card max-width-700">
+    <div *ngIf="loading && (!blog || !blog.title)" class="text-center py-3">
+      Loading...
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #blogForm="ngForm" *ngIf="blog && (!loading || blog.title)">
+      <div *ngIf="errorMessage" class="error-box mb-2">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Title -->
+      <div class="form-group mb-2">
+        <label for="title">Post Title</label>
+        <input type="text" id="title" name="title" [(ngModel)]="blog.title" required #title="ngModel" class="form-input" placeholder="Enter an engaging title">
+        <div *ngIf="title.invalid && title.touched" class="text-red text-sm mt-1">Title is required.</div>
+      </div>
+
+      <!-- Excerpt -->
+      <div class="form-group mb-2">
+        <label for="excerpt">Excerpt / Meta Description</label>
+        <textarea id="excerpt" name="excerpt" [(ngModel)]="blog.excerpt" rows="2" class="form-input" placeholder="Brief summary of the post"></textarea>
+      </div>
+
+      <!-- Content -->
+      <div class="form-group mb-3">
+        <label for="content">Full Content</label>
+        <textarea id="content" name="content" [(ngModel)]="blog.content" required rows="10" class="form-input" placeholder="Write your blog post here..."></textarea>
+      </div>
+
+      <div class="form-grid">
+        <!-- Category -->
+        <div class="form-group mb-2">
+          <label for="category">Category</label>
+          <select id="category" name="category" [(ngModel)]="blog.category" class="form-input">
+            <option value="">Select Category</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <!-- Published Toggle -->
+        <div class="form-group mb-2" style="padding-top: 30px;">
+          <div class="toggle-label flex items-center gap-1 cursor-pointer" (click)="blog.published = !blog.published">
+            <span class="toggle-switch" [class.active]="blog.published"></span>
+            <span class="font-bold">Published</span>
+          </div>
+          <p class="text-sm text-gray mt-1">If turned off, this post is saved as a Draft.</p>
+        </div>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="form-group mb-2 mt-2">
+        <label>Cover Image</label>
+        
+        <!-- Drop zone -->
+        <div *ngIf="!blog.image_url"
+          class="drop-zone"
+          [class.dragging]="isDragging"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+          (click)="fileInput.click()"
+        >
+          <input
+            #fileInput
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            (change)="onFileSelect($event)"
+            style="display: none"
+          >
+          <div class="drop-zone-content" *ngIf="!uploading">
+            <span class="drop-icon">📸</span>
+            <p class="font-bold">Drop cover image here or click to upload</p>
+            <p class="text-sm text-gray">JPEG, PNG, GIF, WebP • Max 5MB</p>
+          </div>
+          <div class="drop-zone-content" *ngIf="uploading">
+            <span class="drop-icon spinning">⏳</span>
+            <p class="font-bold">Uploading...</p>
+          </div>
+        </div>
+
+        <!-- Uploaded image preview -->
+        <div *ngIf="blog.image_url" class="image-preview mt-2" style="position: relative; display: inline-block; width: 100%; max-width: 400px;">
+          <img #coverImg [src]="blog.image_url" alt="Cover Image" 
+               (error)="coverImg.style.display='none'; coverPlaceholder.style.display='flex'"
+               style="max-width: 100%; max-height: 250px; border-radius: 8px; border: 2px solid #e1e8ed; display: block; margin: 0 auto;">
+          
+          <div #coverPlaceholder style="display: none; width: 100%; height: 200px; background: #f4f7f8; border-radius: 8px; border: 2px dashed #dfe6e9; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 20px; box-sizing: border-box;">
+            <span class="text-gray mb-1" style="font-size: 2rem;">🖼️</span>
+            <span class="text-gray font-bold">Preview currently unavailable</span>
+            <span class="text-sm text-gray mt-1" style="word-break: break-all;">Server processed: {{ blog.image_url }}</span>
+          </div>
+
+          <button type="button" class="btn btn-outline text-red bg-white font-bold" (click)="removeImage()" style="position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Remove</button>
+        </div>
+      </div>
+
+      <div class="flex gap-2 mt-4">
+        <button type="submit" [disabled]="blogForm.invalid || loading || uploading" class="btn btn-cyan flex-1 font-bold">
+          {{ loading ? 'Saving...' : (isEditMode ? 'Update Post' : 'Publish Post') }}
+        </button>
+        <a routerLink="/admin/blogs" class="btn btn-outline flex-1 text-center font-bold">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>

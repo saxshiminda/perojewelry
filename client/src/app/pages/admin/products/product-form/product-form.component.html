@@ -1,0 +1,173 @@
+<div class="admin-container">
+  <div class="admin-breadcrumb mb-2">
+    <a routerLink="/admin/dashboard" class="text-cyan font-bold">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <a routerLink="/admin/products" class="text-cyan font-bold">Products</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="text-gray">{{ isEditMode ? 'Edit' : 'New' }}</span>
+  </div>
+  <h1 class="mt-1 mb-2">{{ isEditMode ? 'Edit Piece' : 'Add New Piece' }}</h1>
+
+  <div class="admin-card max-width-700">
+    <div *ngIf="loading && !product.name" class="text-center py-3">
+      Loading...
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #productForm="ngForm" *ngIf="!loading || product.name">
+      <div *ngIf="errorMessage" class="error-box mb-2">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Name -->
+      <div class="form-group mb-2">
+        <label for="name">Piece Name</label>
+        <input type="text" id="name" name="name" [(ngModel)]="product.name" required #name="ngModel" class="form-input">
+        <div *ngIf="name.invalid && name.touched" class="text-red text-sm mt-1">Name is required.</div>
+      </div>
+
+      <!-- Price & Stock -->
+      <div class="form-grid">
+        <div class="form-group mb-2">
+          <label for="price">Price ($)</label>
+          <input type="number" id="price" name="price" [(ngModel)]="product.price" required min="0" step="0.01" class="form-input">
+        </div>
+        <div class="form-group mb-2">
+          <label for="stock">Stock Quantity</label>
+          <input type="number" id="stock" name="stock" [(ngModel)]="product.stock" required min="0" class="form-input">
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div class="form-group mb-2">
+        <label for="category_id">Category</label>
+        <select id="category_id" name="category_id" [(ngModel)]="product.category_id" class="form-input">
+          <option value="">Select Category</option>
+          <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+        </select>
+      </div>
+
+      <!-- Jewelry details -->
+      <div class="form-grid">
+        <div class="form-group mb-2">
+          <label for="material">Material</label>
+          <input type="text" id="material" name="material" [(ngModel)]="product.material" class="form-input" placeholder="e.g. Stainless steel">
+        </div>
+        <div class="form-group mb-2">
+          <label for="finish">Finish</label>
+          <input type="text" id="finish" name="finish" [(ngModel)]="product.finish" class="form-input" placeholder="e.g. Oxidized silver">
+        </div>
+      </div>
+      <div class="form-group mb-2">
+        <label for="dimensions">Dimensions</label>
+        <input type="text" id="dimensions" name="dimensions" [(ngModel)]="product.dimensions" class="form-input" placeholder="e.g. Adjustable 14–16&quot;">
+      </div>
+
+      <div class="form-group mb-2">
+        <label>Size options</label>
+        <div *ngFor="let opt of product.size_options; let i = index" class="form-grid mb-1">
+          <input type="text" [(ngModel)]="opt.label" [name]="'size_label_' + i" class="form-input" placeholder="Label (e.g. 18&quot;)">
+          <div class="flex gap-1 items-center">
+            <input type="number" [(ngModel)]="opt.stock" [name]="'size_stock_' + i" class="form-input" placeholder="Stock" min="0">
+            <button type="button" class="btn btn-sm btn-outline" (click)="removeSizeOption(i)">Remove</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline" (click)="addSizeOption()">Add size</button>
+      </div>
+
+      <!-- Featured Toggle -->
+      <div class="form-group mb-2">
+        <div class="toggle-label flex items-center gap-1 cursor-pointer" (click)="product.is_featured = !product.is_featured">
+          <span class="toggle-switch" [class.active]="product.is_featured"></span>
+          <span class="font-bold">Featured Product</span>
+        </div>
+        <p class="text-sm text-gray mt-1">Featured products appear in the "Top Picks" section on the home page.</p>
+      </div>
+
+      <!-- Discount -->
+      <div class="form-group mb-2">
+        <label>Discount</label>
+        <div class="form-grid">
+          <select name="discount_type" [(ngModel)]="product.discount_type" class="form-input">
+            <option value="">No Discount</option>
+            <option value="percentage">Percentage (%)</option>
+            <option value="fixed">Fixed Amount ($)</option>
+          </select>
+          <input
+            *ngIf="product.discount_type"
+            type="number"
+            name="discount_value"
+            [(ngModel)]="product.discount_value"
+            [placeholder]="product.discount_type === 'percentage' ? 'e.g. 15' : 'e.g. 5.00'"
+            min="0"
+            class="form-input"
+          >
+        </div>
+      </div>
+
+      <!-- Images Upload -->
+      <div class="form-group mb-2">
+        <label>Product Images</label>
+
+        <!-- Drop zone -->
+        <div
+          class="drop-zone"
+          [class.dragging]="isDragging"
+          [class.has-images]="images.length > 0"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+          (click)="fileInput.click()"
+        >
+          <input
+            #fileInput
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            multiple
+            (change)="onFileSelect($event)"
+            style="display: none"
+          >
+          <div class="drop-zone-content" *ngIf="!uploading">
+            <span class="drop-icon">📸</span>
+            <p class="font-bold">Drop images here or click to upload</p>
+            <p class="text-sm text-gray">JPEG, PNG, GIF, WebP • Max 5MB each</p>
+          </div>
+          <div class="drop-zone-content" *ngIf="uploading">
+            <span class="drop-icon spinning">⏳</span>
+            <p class="font-bold">Uploading...</p>
+          </div>
+        </div>
+
+        <!-- Uploaded images -->
+        <div class="image-list mt-2" *ngIf="images.length > 0">
+          <div *ngFor="let img of images; let i = index" class="image-item flex items-center gap-2">
+            <img [src]="img.image_url" [alt]="'Image ' + (i + 1)" class="image-thumb">
+            <span class="image-url text-sm text-gray flex-1">{{ img.image_url }}</span>
+            <button
+              type="button"
+              class="primary-tag"
+              [class.active]="img.is_primary"
+              (click)="setPrimary(i)"
+              title="Set as primary"
+            >
+              {{ img.is_primary ? '⭐ Primary' : '☆ Set primary' }}
+            </button>
+            <button type="button" class="remove-img-btn" (click)="removeImage(i)" title="Remove">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group mb-3">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" [(ngModel)]="product.description" rows="4" class="form-input"></textarea>
+      </div>
+
+      <div class="flex gap-2">
+        <button type="submit" [disabled]="productForm.invalid || loading || uploading || images.length === 0" class="btn btn-cyan flex-1">
+          {{ loading ? 'Saving...' : (isEditMode ? 'Update Piece' : 'Create Piece') }}
+        </button>
+        <a routerLink="/admin/products" class="btn btn-outline flex-1">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<div class="page-header py-4 mb-4">
+  <div class="container">
+    <div class="breadcrumb text-sm mb-2 font-bold">
+      <a routerLink="/" class="text-dark hover-cyan">Home</a> / <span class="text-cyan">News</span>
+    </div>
+    <h1 class="title-display" style="font-size: 2.5rem;">Blog</h1>
+  </div>
+</div>
+
+<div class="container mb-5 flex gap-4">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <!-- <div class="search-box mb-3">
+      <input type="text" placeholder="Search" class="w-full">
+      <button class="search-btn">🔍</button>
+    </div> -->
+
+    <div class="widget mb-3">
+      <h3 class="widget-title font-bold">Recent Posts</h3>
+      <div class="flex-col gap-2">
+        @for (post of recentPosts; track post.id) {
+          <div class="mini-post flex gap-1 items-center">
+            <img [src]="getPostImage(post)" [alt]="post.title" class="mini-img">
+            <div>
+              <h4 class="mb-0 text-sm font-bold"><a [routerLink]="['/blog', post.id]" class="hover-cyan">{{ post.title }}</a></h4>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Promo Banner -->
+    <div class="promo-banner text-center py-4 px-2">
+      <h3 class="title-display text-cyan mb-1" style="font-size: 1.5rem; line-height: 1.2;">Dark Metal.<br>Handwoven beauty.</h3>
+      <p class="text-sm mb-3">New drops and custom commissions.</p>
+      <button class="btn btn-yellow text-sm py-1 px-3" routerLink="/shop">Shop now</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="blog-content">
+    <div class="posts-list flex-col gap-4 mb-4">
+      @for (post of posts; track post.id) {
+        <article class="post-card cursor-pointer" [routerLink]="['/blog', post.id]">
+          <div class="post-image-container mb-2">
+              <img [src]="getPostImage(post)" [alt]="post.title" class="post-image">
+          </div>
+          <div class="post-meta flex items-center gap-1 mb-1 text-sm text-gray">
+             <span class="badge border-badge flex items-center gap-1"><span class="icon">📅</span> {{ post.created_at | date:'mediumDate' }}</span>
+             <span *ngIf="post.category" class="badge bg-light text-dark">{{ post.category }}</span>
+          </div>
+          <h2 class="post-title mb-1 title-display hover-cyan" style="font-size: 1.5rem;">{{ post.title }}</h2>
+          <p class="post-excerpt text-gray text-sm">{{ post.excerpt || (post.content | slice:0:150) + '...' }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</div>

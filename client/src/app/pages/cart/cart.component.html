@@ -1,0 +1,54 @@
+<div class="container py-4">
+  <h1 class="mb-3 text-cyan">Your Shopping Cart</h1>
+  
+  @if (cartItems.length === 0) {
+    <div class="text-center py-4">
+      <h3 class="text-gray mb-2">Your cart is empty!</h3>
+      <a routerLink="/shop" class="btn btn-yellow">Continue Shopping</a>
+    </div>
+  } @else {
+    <div class="cart-layout flex gap-3">
+      <div class="cart-items flex-col gap-2" style="flex: 2;">
+        @for (item of cartItems; track item.id) {
+          <div class="cart-item bg-card p-2 radius-md shadow-sm border flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <img [src]="getImageUrl(item)" [alt]="item.product.name" class="item-img radius-sm">
+              <div>
+                <h4 class="mb-0 text-dark">{{ item.product.name }}</h4>
+                @if (item.selected_size) {
+                  <p class="text-sm text-gray mb-0">Size: {{ item.selected_size }}</p>
+                }
+                <p class="text-cyan font-bold">${{ getPrice(item) | number:'1.2-2' }}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="qty-control flex items-center border radius-round">
+                <button class="qty-btn" (click)="updateQuantity(item, -1)">-</button>
+                <span class="qty mx-1">{{ item.quantity }}</span>
+                <button class="qty-btn" (click)="updateQuantity(item, 1)">+</button>
+              </div>
+              <button class="remove-btn text-gray hover-red" (click)="removeItem(item.id)">🗑️</button>
+            </div>
+          </div>
+        }
+      </div>
+      
+      <div class="cart-summary bg-card p-3 radius-md shadow-sm border" style="flex: 1; height: fit-content;">
+        <h3 class="mb-2">Order Summary</h3>
+        <div class="flex justify-between mb-1">
+          <span class="text-gray">Subtotal</span>
+          <span class="font-bold">${{ subtotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between mb-2 pb-2" style="border-bottom: 1px solid var(--border-color)">
+          <span class="text-gray">Shipping</span>
+          <span class="font-bold">{{ shipping === 0 ? 'Free' : '$' + (shipping | number:'1.2-2') }}</span>
+        </div>
+        <div class="flex justify-between mb-3">
+          <span class="font-bold text-lg">Total</span>
+          <span class="font-bold text-lg text-cyan">${{ total | number:'1.2-2' }}</span>
+        </div>
+        <a routerLink="/checkout" class="btn btn-yellow w-100 text-center">Proceed to Checkout</a>
+      </div>
+    </div>
+  }
+</div>

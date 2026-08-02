@@ -1,0 +1,80 @@
+<header class="main-header" [class.scrolled]="isScrolled">
+  <div class="container flex justify-between items-center py-2">
+    <a routerLink="/" class="logo" aria-label="Pero Jewelry home">
+      <img src="images/logo.png" alt="Pero Jewelry — Handmade with love" class="logo-img">
+    </a>
+
+    <nav class="nav-links flex gap-2 font-bold" [class.mobile-open]="isMobileMenuOpen">
+      <button class="mobile-close md-hide" (click)="isMobileMenuOpen = false">×</button>
+
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="isMobileMenuOpen = false">Home</a>
+      <a routerLink="/shop" routerLinkActive="active" (click)="isMobileMenuOpen = false">Shop</a>
+      <a routerLink="/contact" routerLinkActive="active" (click)="isMobileMenuOpen = false">Contact</a>
+    </nav>
+
+    <div class="header-actions flex gap-2 items-center">
+      <div class="search-box items-center">
+        <input type="text" placeholder="Search" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()">
+        <button class="search-btn" (click)="onSearch()" aria-label="Search">⌕</button>
+      </div>
+
+      <button
+        type="button"
+        class="theme-toggle"
+        (click)="themeService.toggle()"
+        [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+      >
+        {{ themeService.theme() === 'dark' ? '☀' : '☾' }}
+      </button>
+
+      <a routerLink="/cart" class="cart-icon ml-1" aria-label="Cart">
+        <svg class="cart-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 6h15l-1.5 9h-12z"/>
+          <path d="M6 6l-2-3H2"/>
+          <circle cx="9" cy="20" r="1.25"/>
+          <circle cx="18" cy="20" r="1.25"/>
+        </svg>
+        <span class="cart-badge" *ngIf="(cartService.cartCount$ | async) as count">{{ count }}</span>
+      </a>
+
+      <ng-container *ngIf="authService.currentUser$ | async as user; else guestLinks">
+        <div class="user-menu-container ml-1" style="position: relative;">
+          <button (click)="toggleDropdown($event)" class="user-avatar-btn flex items-center justify-center cursor-pointer bg-transparent border-0 p-0">
+            <div class="avatar-circle font-bold ml-1 flex items-center justify-center" style="overflow: hidden;">
+              <img *ngIf="getUserAvatar(user)" #avatarImg [src]="getUserAvatar(user)" alt="Avatar"
+                   (error)="avatarImg.style.display='none'; avatarPlaceholder.style.display='block'"
+                   style="width: 100%; height: 100%; object-fit: cover;">
+              <span #avatarPlaceholder [style.display]="getUserAvatar(user) ? 'none' : 'block'">{{ user.name.charAt(0).toUpperCase() }}</span>
+            </div>
+          </button>
+
+          <div class="dropdown-menu shadow-lg radius-md flex-col" [class.show]="isDropdownOpen">
+            <div class="dropdown-header border-bottom px-2 py-2">
+              <div class="user-name font-bold">{{ user.name }}</div>
+              <div class="user-email text-sm text-gray">{{ user.email }}</div>
+            </div>
+            <div class="dropdown-items flex-col py-1">
+              <a *ngIf="user.role === 'admin'" routerLink="/admin/dashboard" (click)="isDropdownOpen = false" class="dropdown-item dropdown-admin-item font-bold">Dashboard</a>
+              <a routerLink="/profile" (click)="isDropdownOpen = false" class="dropdown-item">My Profile</a>
+              <a routerLink="/orders" (click)="isDropdownOpen = false" class="dropdown-item">My Orders</a>
+              <a routerLink="/favorites" (click)="isDropdownOpen = false" class="dropdown-item">Favorites</a>
+              <div class="dropdown-divider"></div>
+              <button (click)="logout()" class="dropdown-item logout-btn">Logout</button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #guestLinks>
+        <div class="guest-buttons ml-1">
+          <a routerLink="/login" class="btn-auth btn-login">Login</a>
+          <a routerLink="/register" class="btn-auth btn-register">Register</a>
+        </div>
+      </ng-template>
+
+      <button class="mobile-toggle md-hide ml-1" (click)="toggleMobileMenu()">
+        ☰
+      </button>
+    </div>
+  </div>
+</header>

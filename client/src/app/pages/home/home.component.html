@@ -1,0 +1,90 @@
+<section class="hero">
+  <div class="hero-media" aria-hidden="true">
+    <img src="images/products/rose-quartz-spike-necklace.png" alt="">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <img src="images/logo.png" alt="Pero Jewelry" class="hero-logo">
+    <h1 class="hero-title">Handmade metal.<br>Dark romance.</h1>
+    <p class="hero-lead">Chainmail, crystals, and spikes — forged by hand for those who wear the night.</p>
+    <div class="hero-cta">
+      <a routerLink="/shop" class="btn btn-cyan">Shop the collection</a>
+      <a href="https://www.instagram.com/perojewelry/" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Instagram</a>
+    </div>
+  </div>
+</section>
+
+<section class="container mb-5 collections-section">
+  <h2 class="section-title">Collections</h2>
+  <p class="section-sub text-gray mb-3">Find the piece that fits your edge</p>
+  <div class="collections-grid">
+    <a routerLink="/shop" class="collection-tile">
+      <img src="images/products/garnet-chainmail-necklace.png" alt="Necklaces">
+      <span>Necklaces</span>
+    </a>
+    <a routerLink="/shop" class="collection-tile">
+      <img src="images/products/crystal-web-headpiece.png" alt="Headpieces">
+      <span>Headpieces</span>
+    </a>
+    <a routerLink="/shop" class="collection-tile">
+      <img src="images/products/barbed-wallet-chain.png" alt="Chains">
+      <span>Chains</span>
+    </a>
+    <a routerLink="/shop" class="collection-tile">
+      <img src="images/products/chainmail-lighter-case.png" alt="Accessories">
+      <span>Accessories</span>
+    </a>
+  </div>
+</section>
+
+<section class="container mb-5 text-center">
+  <h2 class="section-title mb-2">Featured pieces</h2>
+  <div class="tabs flex justify-center gap-2 mb-3">
+    <button class="tab" [class.active]="activeTab === 'featured'" (click)="switchTab('featured')">Featured</button>
+    <button class="tab" [class.active]="activeTab === 'bestseller'" (click)="switchTab('bestseller')">Best sellers</button>
+    <button class="tab" [class.active]="activeTab === 'new'" (click)="switchTab('new')">New arrivals</button>
+  </div>
+  <div class="products-grid">
+    @for (product of tabProducts; track product.id) {
+      <app-product-card [product]="product"></app-product-card>
+    }
+    @empty {
+      <p class="text-gray">No products found yet.</p>
+    }
+  </div>
+</section>
+
+<section class="promo-band mb-5">
+  <div class="container promo-inner">
+    <div class="promo-copy">
+      <h2>Every link is intentional</h2>
+      <p class="text-gray mb-3">From Byzantine weaves to spiked fringe — each piece is handmade and limited.</p>
+      <a routerLink="/shop" class="btn btn-outline">Explore the shop</a>
+    </div>
+    <div class="promo-visual">
+      <img src="images/products/crystal-web-headpiece.png" alt="Crystal headpiece">
+    </div>
+  </div>
+</section>
+
+<section class="container mb-5 text-center">
+  <h2 class="section-title mb-1">On sale</h2>
+  <p class="text-gray mb-3">Limited drops with special pricing</p>
+  <div class="products-grid">
+    @for (product of onSaleProducts; track product.id) {
+      <app-product-card [product]="product"></app-product-card>
+    }
+    @empty {
+      <p class="text-gray">No sale products at the moment.</p>
+    }
+  </div>
+</section>
+
+<section class="container mb-5 text-center newsletter-section">
+  <h2 class="section-title mb-1">Stay close</h2>
+  <p class="text-gray mb-2">New drops and custom openings — straight to your inbox.</p>
+  <div class="newsletter-form flex justify-center mb-4">
+    <input type="email" placeholder="Enter your email">
+    <button class="btn btn-cyan text-white">Join</button>
+  </div>
+</section>

@@ -1,0 +1,80 @@
+<div class="container py-4">
+  <h1 class="mb-3 text-cyan">Checkout</h1>
+  
+  @if (cartItems.length === 0) {
+    <div class="text-center py-4">
+      <h3 class="text-gray mb-2">Your cart is empty!</h3>
+      <a routerLink="/shop" class="btn btn-yellow">Continue Shopping</a>
+    </div>
+  } @else {
+    <div class="checkout-layout flex gap-4">
+      <div class="billing-details flex-col gap-3" style="flex: 2;">
+        <div class="bg-card p-4 radius-lg shadow-sm border">
+          <h3 class="mb-2">Billing Details</h3>
+          <form class="flex-col gap-2">
+            <div class="form-group pb-1">
+              <label class="font-bold mb-1">Full Name</label>
+              <input type="text" class="form-control" placeholder="Jane Doe" [(ngModel)]="shippingName" name="name">
+            </div>
+            <div class="form-group pb-1">
+              <label class="font-bold mb-1">Email Address</label>
+              <input type="email" class="form-control" placeholder="jane&#64;example.com" [(ngModel)]="shippingEmail" name="email">
+            </div>
+            <div class="form-group pb-1">
+              <label class="font-bold mb-1">Shipping Address</label>
+              <input type="text" class="form-control" placeholder="12 Atelier Lane" [(ngModel)]="shippingAddress" name="address">
+            </div>
+            <div class="flex gap-2">
+              <div class="form-group pb-1" style="flex: 1;">
+                <label class="font-bold mb-1">City</label>
+                <input type="text" class="form-control" placeholder="City" [(ngModel)]="shippingCity" name="city">
+              </div>
+              <div class="form-group pb-1" style="flex: 1;">
+                <label class="font-bold mb-1">Zip Code</label>
+                <input type="text" class="form-control" placeholder="12345" [(ngModel)]="shippingZip" name="zip">
+              </div>
+            </div>
+          </form>
+        </div>
+        
+        <div class="bg-card p-4 radius-lg shadow-sm border">
+          <h3 class="mb-2">Payment Method</h3>
+          <div class="flex-col gap-2">
+            <label class="flex items-center gap-1 p-2 border radius-md cursor-pointer" style="background: var(--bg-light)">
+              <input type="radio" name="payment" value="credit_card" [(ngModel)]="paymentMethod"> Credit Card
+            </label>
+            <label class="flex items-center gap-1 p-2 border radius-md cursor-pointer">
+              <input type="radio" name="payment" value="paypal" [(ngModel)]="paymentMethod"> PayPal
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="order-summary bg-card p-4 radius-lg shadow-sm border h-fit" style="flex: 1;">
+        <h3 class="mb-2">Your Order</h3>
+        @for (item of cartItems; track item.id) {
+          <div class="flex justify-between mb-1 pb-1 border-bottom">
+            <span class="text-gray">{{ item.product.name }} (x{{ item.quantity }})</span>
+            <span class="font-bold">${{ getPrice(item) * item.quantity | number:'1.2-2' }}</span>
+          </div>
+        }
+        <div class="flex justify-between mb-1 pt-1">
+          <span class="text-gray">Subtotal</span>
+          <span class="font-bold">${{ subtotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between mb-2 pb-2 border-bottom">
+          <span class="text-gray">Shipping</span>
+          <span class="font-bold">{{ shipping === 0 ? 'Free' : '$' + (shipping | number:'1.2-2') }}</span>
+        </div>
+        <div class="flex justify-between mb-4">
+          <span class="font-bold text-lg">Total</span>
+          <span class="font-bold text-lg text-cyan">${{ total | number:'1.2-2' }}</span>
+        </div>
+        
+        <button class="btn btn-cyan w-100 text-center" (click)="placeOrder()" [disabled]="isPlacingOrder">
+          {{ isPlacingOrder ? 'Placing Order...' : 'Place Order' }}
+        </button>
+      </div>
+    </div>
+  }
+</div>

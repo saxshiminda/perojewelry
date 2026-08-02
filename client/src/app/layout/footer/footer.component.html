@@ -1,0 +1,38 @@
+<footer class="footer mt-5">
+  <div class="container footer-content flex justify-between gap-4">
+    <div class="footer-col brand-col">
+      <a routerLink="/" class="logo mb-2" aria-label="Pero Jewelry home">
+        <img src="images/logo.png" alt="Pero Jewelry — Handmade with love" class="logo-img">
+      </a>
+      <p class="text-sm text-gray mb-3">Handmade with love — chainmail and gothic jewelry, forged link by link.</p>
+      <div class="socials flex gap-1">
+        <a href="https://www.instagram.com/perojewelry/" target="_blank" rel="noopener noreferrer" class="social-icon">IG</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4 class="mb-2">Shop</h4>
+      <ul class="flex-col gap-1 text-gray">
+        <li><a routerLink="/shop">All pieces</a></li>
+        <li><a routerLink="/shop" [queryParams]="{category: 'necklaces'}">Necklaces</a></li>
+        <li><a routerLink="/favorites">Wishlist</a></li>
+        <li><a routerLink="/orders">Track order</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4 class="mb-2">Studio</h4>
+      <ul class="flex-col gap-1 text-gray">
+        <li>Custom commissions welcome</li>
+        <li>Ships worldwide</li>
+        <li>Instagram: <a href="https://www.instagram.com/perojewelry/" target="_blank" rel="noopener noreferrer" class="text-cyan">@perojewelry</a></li>
+        <li>Email: <a href="mailto:hello@perojewelry.com" class="text-cyan">hello&#64;perojewelry.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom mt-4 py-2 border-t text-center text-sm text-gray">
+    <div class="container">
+      &copy; 2026 Pero Jewelry. All rights reserved.
+    </div>
+  </div>
+</footer>

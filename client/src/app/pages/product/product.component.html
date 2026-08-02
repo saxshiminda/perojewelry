@@ -1,0 +1,173 @@
+<div class="container py-4">
+  <div class="breadcrumb text-sm mb-4 font-bold">
+    <a routerLink="/" class="text-dark">Home</a> / <span class="text-cyan">{{ product?.name || 'Loading...' }}</span>
+  </div>
+
+  @if (product) {
+    <div class="product-layout flex gap-4 mb-5">
+      <div class="product-gallery">
+        <div class="main-image-container bg-light flex justify-center items-center mb-2">
+           <button class="expand-btn" (click)="toggleFullscreen()">⤢</button>
+           <img [src]="selectedImage || product.primary_image_url" [alt]="product.name" class="main-image" (click)="toggleFullscreen()" style="cursor: pointer;">
+        </div>
+        @if (product.images && product.images.length > 1) {
+          <div class="thumbnails flex gap-1">
+            @for (img of product.images; track img.id) {
+              <div class="thumb" [class.active]="selectedImage === img.image_url" (click)="selectImage(img.image_url)">
+                <img [src]="img.image_url" alt="Thumb">
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="product-info">
+        <h1 class="title-display mb-1" style="font-size: 2.25rem;">{{ product.name }}</h1>
+        <div class="price-block mb-1">
+          @if (product.is_on_sale) {
+            <span class="price font-bold text-cyan" style="font-size: 1.5rem;">${{ product.sale_price | number:'1.2-2' }}</span>
+            <span class="price-old" style="font-size: 1.1rem;">${{ product.price | number:'1.2-2' }}</span>
+            <span class="sale-tag">
+              @if (product.discount_type === 'percentage') {
+                -{{ product.discount_value }}%
+              } @else {
+                -${{ product.discount_value | number:'1.2-2' }} off
+              }
+            </span>
+          } @else {
+            <span class="price font-bold" style="font-size: 1.5rem;">${{ product.price | number:'1.2-2' }}</span>
+          }
+        </div>
+
+        <p class="description text-gray mb-3">
+          {{ product.description }}
+        </p>
+
+        @if (product.material || product.finish || product.dimensions) {
+          <div class="meta-info border-card p-3 mb-3 flex flex-col gap-1 text-sm">
+            @if (product.material) {
+              <div><strong>Material:</strong> {{ product.material }}</div>
+            }
+            @if (product.finish) {
+              <div><strong>Finish:</strong> {{ product.finish }}</div>
+            }
+            @if (product.dimensions) {
+              <div><strong>Dimensions:</strong> {{ product.dimensions }}</div>
+            }
+          </div>
+        }
+
+        @if (product.size_options?.length) {
+          <div class="mb-3">
+            <p class="font-bold mb-1 text-sm" style="letter-spacing: 0.06em; text-transform: uppercase;">Size</p>
+            <div class="size-options">
+              @for (opt of product.size_options; track opt.label) {
+                <button
+                  type="button"
+                  class="size-option"
+                  [class.active]="selectedSize === opt.label"
+                  [disabled]="opt.stock <= 0"
+                  (click)="selectSize(opt.label)"
+                >
+                  {{ opt.label }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="cart-actions flex items-center gap-2 mb-4">
+          <div class="qty-selector flex items-center">
+            <button (click)="changeQuantity(-1)">-</button>
+            <input type="number" [(ngModel)]="quantity" min="1">
+            <button (click)="changeQuantity(1)">+</button>
+          </div>
+          <button class="btn btn-cyan btn-add-to-cart" (click)="addToCart()">Add to cart</button>
+          <button class="icon-btn" (click)="toggleFavorite()" [attr.aria-label]="isFavorite ? 'Remove favorite' : 'Add favorite'">
+            {{ isFavorite ? '♥' : '♡' }}
+          </button>
+        </div>
+
+        <div class="meta-info border-card p-3 mb-2 flex flex-col gap-1 text-sm bg-light">
+          <div class="flex justify-between">
+            <span><strong>Category:</strong> <span class="text-dark" style="margin-left:5px">{{ product.category?.name }}</span></span>
+            <span><strong>Stock:</strong> {{ product.stock > 0 ? product.stock + ' in stock' : 'Out of stock' }}</span>
+          </div>
+        </div>
+
+        <div class="safe-checkout border-card p-3">
+           <p class="font-bold mb-1">Secure checkout</p>
+           <p class="text-sm text-gray mb-0">Simulated payment for demo — Visa, Mastercard, PayPal.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-card mb-5 flex-col">
+       <div class="tabs flex justify-center gap-4 py-2 border-b">
+         <button class="tab" [class.active]="activeTab === 'description'" (click)="setTab('description')">Description</button>
+         <button class="tab" [class.active]="activeTab === 'reviews'" (click)="setTab('reviews')">Reviews</button>
+       </div>
+       <div class="tab-content p-4 text-gray">
+         @if (activeTab === 'description') {
+           <p>{{ product.description }}</p>
+         }
+         @if (activeTab === 'reviews') {
+           <div class="reviews-section text-left" style="text-align: left;">
+             @if (reviewsLoading) {
+               <p class="text-center">Loading reviews...</p>
+             } @else if (reviews.length === 0) {
+               <p class="text-center">No reviews yet.</p>
+             } @else {
+               <div class="reviews-list flex flex-col gap-3">
+                 @for (review of reviews; track review.id) {
+                   <div class="review-item p-3 border-b">
+                     <div class="flex justify-between items-center mb-1">
+                        <strong class="text-dark">{{ review.user.name }}</strong>
+                        <div class="rating-display">
+                           @for (i of [1,2,3,4,5]; track i) {
+                             <span [style.color]="i <= review.rating ? 'var(--accent)' : 'var(--border-strong)'" style="font-size:1.25rem;">★</span>
+                           }
+                        </div>
+                     </div>
+                     <p class="mb-0 text-sm">{{ review.comment }}</p>
+                     <small class="text-light">{{ review.created_at | date }}</small>
+                   </div>
+                 }
+               </div>
+             }
+           </div>
+         }
+       </div>
+    </div>
+
+    <div class="related-products text-center mb-5">
+      <h2 class="title-display mb-4">Related pieces</h2>
+      <div class="products-grid flex justify-center gap-3" style="text-align: left;">
+         @for (rel of relatedProducts; track rel.id) {
+            <app-product-card [product]="rel" style="width: 280px;"></app-product-card>
+         }
+      </div>
+    </div>
+  }
+
+  @if (isFullscreen) {
+    <div class="fullscreen-modal" (click)="toggleFullscreen()">
+      <button class="close-modal-btn" (click)="toggleFullscreen()">✕</button>
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <img [src]="selectedImage || product?.primary_image_url" [alt]="product?.name" class="fullscreen-image">
+
+        @if (product?.images; as images) {
+          @if (images.length > 1) {
+            <div class="modal-thumbnails flex gap-2 justify-center mt-3">
+              @for (img of images; track img.id) {
+                <div class="thumb" [class.active]="selectedImage === img.image_url" (click)="selectImage(img.image_url)">
+                  <img [src]="img.image_url" alt="Thumb">
+                </div>
+              }
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,14 @@
+{
+  "/api": {
+    "target": "http://server:8000",
+    "secure": false
+  },
+  "/sanctum": {
+    "target": "http://server:8000",
+    "secure": false
+  },
+  "/storage": {
+    "target": "http://server:8000",
+    "secure": false
+  }
+}

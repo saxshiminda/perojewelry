@@ -1,0 +1,24 @@
+.btn {
+  display: inline-block;
+  padding: 12px 32px;
+  border-radius: var(--radius-round);
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  font-size: 1.125rem;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  filter: brightness(1.05);
+}
+.btn-cyan {
+  background-color: var(--primary-cyan);
+  color: white;
+}
+.btn-yellow {
+  background-color: var(--primary-yellow);
+  color: var(--text-dark);
+}
