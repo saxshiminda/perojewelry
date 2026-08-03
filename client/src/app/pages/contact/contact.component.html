@@ -3,7 +3,7 @@
     <div class="breadcrumb text-sm mb-2 font-bold justify-center flex">
       <a routerLink="/" class="text-dark hover-cyan">Home</a><span style="margin: 0 8px;">/</span><span class="text-cyan">Contact</span>
     </div>
-    <h1 class="title-display" style="font-size: 2.5rem;">Contact Us</h1>
+    <h1 class="title-display" style="font-size: 2.5rem;">Contact</h1>
   </div>
 </div>
 
@@ -11,48 +11,54 @@
   <div class="contact-grid flex gap-4">
     <div class="contact-info flex-1">
       <h2 class="title-display mb-2">Get in touch</h2>
-      <p class="text-gray mb-4">Questions about a piece, custom work, or shipping — send a note and we'll get back to you.</p>
-      
-      <div class="info-item flex items-center gap-2 mb-3">
-        <div class="icon-circle bg-light-cyan">📍</div>
-        <div>
-          <h4 class="mb-0">Address</h4>
-          <p class="text-gray text-sm">Handmade studio — worldwide shipping</p>
+      <p class="text-gray mb-4">Questions about a piece, custom work, or shipping — reach out directly. Replies usually come within a day or two.</p>
+
+      <a href="mailto:hello@perojewelry.com" class="info-item flex items-center gap-2 mb-3 contact-link">
+        <div class="icon-circle" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="18" height="14" rx="1"/>
+            <path d="M3 7l9 7 9-7"/>
+          </svg>
         </div>
-      </div>
-      
-      <div class="info-item flex items-center gap-2 mb-3">
-        <div class="icon-circle bg-light-yellow">📞</div>
-        <div>
-          <h4 class="mb-0">Phone</h4>
-          <p class="text-gray text-sm">@perojewelry</p>
-        </div>
-      </div>
-      
-      <div class="info-item flex items-center gap-2 mb-3">
-        <div class="icon-circle bg-light-green">✉️</div>
         <div>
           <h4 class="mb-0">Email</h4>
-          <p class="text-gray text-sm">hello@perojewelry.com</p>
+          <p class="text-gray text-sm mb-0">hello&#64;perojewelry.com</p>
+        </div>
+      </a>
+
+      <a href="https://www.instagram.com/perojewelry/" target="_blank" rel="noopener noreferrer" class="info-item flex items-center gap-2 mb-3 contact-link">
+        <div class="icon-circle" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <div>
+          <h4 class="mb-0">Instagram</h4>
+          <p class="text-gray text-sm mb-0">@perojewelry</p>
+        </div>
+      </a>
+
+      <div class="info-item flex items-center gap-2 mb-3">
+        <div class="icon-circle" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z"/>
+            <circle cx="12" cy="10" r="2.5"/>
+          </svg>
+        </div>
+        <div>
+          <h4 class="mb-0">Studio</h4>
+          <p class="text-gray text-sm mb-0">Handmade pieces — ships worldwide</p>
         </div>
       </div>
     </div>
-    
-    <div class="contact-form flex-1 border-card p-4">
-      <h3 class="title-display mb-3">Send us a message</h3>
-      <div class="form-group mb-2">
-        <label class="text-sm font-bold block mb-1">Your Name</label>
-        <input type="text" class="form-control" placeholder="John Doe">
-      </div>
-      <div class="form-group mb-2">
-        <label class="text-sm font-bold block mb-1">Your Email</label>
-        <input type="email" class="form-control" placeholder="john@example.com">
-      </div>
-      <div class="form-group mb-3">
-        <label class="text-sm font-bold block mb-1">Message</label>
-        <textarea class="form-control" rows="5" placeholder="How can we help you?"></textarea>
-      </div>
-      <button class="btn btn-cyan w-full text-center py-2" style="font-size: 1.125rem;">Send Message</button>
+
+    <div class="contact-cta flex-1 border-card p-4">
+      <h3 class="title-display mb-2">Custom commissions</h3>
+      <p class="text-gray mb-3">Want something made for you? Send a note with references, materials, and sizing — we'll reply with availability and a quote.</p>
+      <a href="mailto:hello@perojewelry.com?subject=Custom%20commission%20inquiry" class="btn btn-cyan mb-2">Email for custom work</a>
+      <a href="https://www.instagram.com/perojewelry/" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Message on Instagram</a>
     </div>
   </div>
 </div>
