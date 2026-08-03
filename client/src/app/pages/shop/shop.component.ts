@@ -4,7 +4,6 @@ import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService, Category } from '../../core/services/category.service';
 import { Product } from '../../core/models/product.model';
-import { PaginatedResponse } from '../../core/models/paginated-response.model';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { FormsModule } from '@angular/forms';
 
@@ -24,20 +23,18 @@ export class ShopComponent implements OnInit {
   products: Product[] = [];
   popularProducts: Product[] = [];
   categories: Category[] = [];
-  
-  viewMode: 'grid' | 'list' = 'grid';
 
-  // Filters from URL/UI
+  viewMode: 'grid' | 'list' = 'grid';
+  loading = true;
+
   searchQuery = '';
   categoryId: number | string = '';
   sortBy = 'default';
-  
-  // Price Range
+
   absMinPrice = 0;
   absMaxPrice = 200;
   currentMaxPrice = 200;
-  
-  // Pagination
+
   currentPage = 1;
   lastPage = 1;
   totalItems = 0;
@@ -45,15 +42,13 @@ export class ShopComponent implements OnInit {
   ngOnInit() {
     this.categoryService.getCategories().subscribe({
       next: (cats: any) => {
-        console.log('Categories API:', cats);
         this.categories = Array.isArray(cats) ? cats : (cats?.data && Array.isArray(cats.data) ? cats.data : []);
       },
-      error: (err) => {
-        console.error('Failed to get categories', err);
+      error: () => {
         this.categories = [];
       }
     });
-    
+
     this.productService.getPriceRange().subscribe(range => {
       this.absMinPrice = range.min;
       this.absMaxPrice = range.max;
@@ -64,11 +59,9 @@ export class ShopComponent implements OnInit {
 
     this.productService.getBestSellers(3).subscribe({
       next: (data: any) => {
-        console.log('Best Sellers API:', data);
         this.popularProducts = Array.isArray(data) ? data : (data?.data && Array.isArray(data.data) ? data.data : []);
       },
-      error: (err) => {
-        console.error('Failed to get best sellers', err);
+      error: () => {
         this.popularProducts = [];
       }
     });
@@ -78,16 +71,23 @@ export class ShopComponent implements OnInit {
       this.categoryId = params['category_id'] || '';
       this.sortBy = params['sort'] || 'default';
       this.currentPage = params['page'] ? +params['page'] : 1;
-      
+
       if (params['max_price']) {
         this.currentMaxPrice = +params['max_price'];
       }
-      
+
       this.loadProducts();
     });
   }
 
+  get activeCategoryName(): string {
+    if (!this.categoryId) return '';
+    const cat = this.categories.find(c => c.id == this.categoryId);
+    return cat?.name || '';
+  }
+
   loadProducts() {
+    this.loading = true;
     this.productService.getProducts({
       page: this.currentPage,
       search: this.searchQuery,
@@ -96,14 +96,14 @@ export class ShopComponent implements OnInit {
       max_price: this.currentMaxPrice
     }).subscribe({
       next: (res: any) => {
-        console.log('Products API:', res);
         this.products = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
         this.lastPage = res?.last_page || 1;
         this.totalItems = res?.total || this.products.length;
+        this.loading = false;
       },
-      error: (err) => {
-        console.error('Failed to get products', err);
+      error: () => {
         this.products = [];
+        this.loading = false;
       }
     });
   }

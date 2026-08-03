@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../core/services/product.service';
@@ -8,9 +8,7 @@ import { FavoriteService } from '../../core/services/favorite.service';
 import { Product } from '../../core/models/product.model';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
-import { PaginatedResponse } from '../../core/models/paginated-response.model';
 import { ToastService } from '../../core/services/toast.service';
 
 @Component({
@@ -20,13 +18,12 @@ import { ToastService } from '../../core/services/toast.service';
   templateUrl: './product.component.html',
   styleUrl: './product.component.css'
 })
-export class ProductComponent implements OnInit {
+export class ProductComponent implements OnInit, OnDestroy {
   route = inject(ActivatedRoute);
   router = inject(Router);
   productService = inject(ProductService);
   cartService = inject(CartService);
   authService = inject(AuthService);
-  private http = inject(HttpClient);
   private toastService = inject(ToastService);
   
   product: Product | undefined;
@@ -100,20 +97,19 @@ export class ProductComponent implements OnInit {
   addToCart() {
     if (!this.product) return;
 
-    if (!this.authService.currentUser) {
-      this.router.navigate(['/login'], {
-        queryParams: { returnUrl: `/product/${this.product.id}` }
-      });
-      return;
-    }
-
     if (this.product.size_options?.length && !this.selectedSize) {
       this.toastService.error('Please select a size');
       return;
     }
 
-    this.cartService.addToCart(this.product.id!, this.quantity, this.selectedSize).subscribe(() => {
-      this.toastService.success('Item added to cart!');
+    if (this.product.stock <= 0) {
+      this.toastService.error('This piece is out of stock');
+      return;
+    }
+
+    this.cartService.addToCart(this.product.id!, this.quantity, this.selectedSize, this.product).subscribe({
+      next: () => this.toastService.success('Added to bag'),
+      error: () => this.toastService.error('Could not add to bag')
     });
   }
 

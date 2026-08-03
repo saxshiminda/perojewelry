@@ -178,23 +178,6 @@
   transform: scale(1.04);
 }
 
-.newsletter-form input {
-  padding: 14px 24px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-  width: min(320px, 70vw);
-  outline: none;
-  font-family: inherit;
-  font-size: 1rem;
-  background: var(--bg-elevated);
-  color: var(--text-dark);
-}
-
-.newsletter-form button {
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  margin-left: -1px;
-}
-
 @keyframes heroDrift {
   from { transform: scale(1.02); }
   to { transform: scale(1.08) translateY(-1%); }
