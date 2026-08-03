@@ -5,13 +5,18 @@
         <a routerLink="/" class="text-dark">Home</a> / <span class="text-cyan">Shop</span>
       </div>
       <h1 class="title-display mb-0" style="font-size: 2.5rem;">
-        {{ categoryId ? 'Category Products' : (searchQuery ? 'Search Results' : 'All Pieces') }}
+        {{ activeCategoryName || (searchQuery ? 'Search results' : 'All pieces') }}
       </h1>
     </div>
     
     <div class="shop-search search-box items-center">
       <input type="text" placeholder="Search pieces..." [(ngModel)]="searchQuery" (keyup.enter)="onSearchSubmit()">
-      <button class="search-btn" (click)="onSearchSubmit()">🔍</button>
+      <button type="button" class="search-btn" (click)="onSearchSubmit()" aria-label="Search">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/>
+          <path d="M20 20l-3.5-3.5"/>
+        </svg>
+      </button>
     </div>
   </div>
 </div>
@@ -30,7 +35,7 @@
         @for (cat of categories; track cat.id) {
           <li>
             <a href="#" (click)="onCategoryClick(cat.id, $event)" [class.text-cyan]="categoryId == cat.id" class="flex justify-between font-bold">
-              <span>+ {{ cat.name }}</span>
+              <span>{{ cat.name }}</span>
             </a>
           </li>
         }
@@ -43,8 +48,8 @@
         <input type="range" [min]="absMinPrice" [max]="absMaxPrice" [(ngModel)]="currentMaxPrice" class="w-full">
       </div>
       <div class="flex justify-between items-center text-sm mb-3">
-        <span class="font-bold">${{ absMinPrice | number:'1.2-2' }}</span>
-        <span class="text-cyan font-bold">Max: ${{ currentMaxPrice | number:'1.2-2' }}</span>
+        <span class="font-bold">₾{{ absMinPrice | number:'1.2-2' }}</span>
+        <span class="text-cyan font-bold">Max: ₾{{ currentMaxPrice | number:'1.2-2' }}</span>
       </div>
       <button class="btn btn-cyan w-full text-center py-2" style="font-size: 1rem; border-radius: 8px;" (click)="onFilterApply()">Apply Filter</button>
     </div>
@@ -57,7 +62,7 @@
             <img [src]="prod.primary_image_url" [alt]="prod.name" class="mini-img">
             <div>
               <h4 class="mb-0 text-sm font-bold"><a [routerLink]="['/product', prod.id]">{{ prod.name }}</a></h4>
-              <span class="text-cyan text-sm font-bold">${{ (prod.effective_price || prod.price) | number:'1.2-2' }}</span>
+              <span class="text-cyan text-sm font-bold">₾{{ (prod.effective_price || prod.price) | number:'1.2-2' }}</span>
             </div>
           </div>
         }
@@ -87,11 +92,19 @@
     </div>
 
     <div class="products-container" [class.list-view]="viewMode === 'list'">
-      @for (product of products; track product.id) {
-        <app-product-card [product]="product"></app-product-card>
-      }
-      @empty {
-        <div class="text-center py-4 w-full text-gray font-bold">No products found matching your criteria.</div>
+      @if (loading) {
+        <div class="text-center py-4 w-full text-gray">Loading pieces…</div>
+      } @else {
+        @for (product of products; track product.id) {
+          <app-product-card [product]="product"></app-product-card>
+        }
+        @empty {
+          <div class="shop-empty text-center py-4 w-full">
+            <h3 class="text-gray mb-2">No pieces match</h3>
+            <p class="text-gray mb-3">Try clearing filters or browse the full collection.</p>
+            <a routerLink="/shop" class="btn btn-outline">Clear filters</a>
+          </div>
+        }
       }
     </div>
 

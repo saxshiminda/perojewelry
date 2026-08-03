@@ -1,12 +1,23 @@
 <div class="container py-4">
-  <h1 class="mb-3 text-cyan">Your Shopping Cart</h1>
-  
+  <h1 class="mb-3">Your bag</h1>
+
   @if (cartItems.length === 0) {
-    <div class="text-center py-4">
-      <h3 class="text-gray mb-2">Your cart is empty!</h3>
-      <a routerLink="/shop" class="btn btn-yellow">Continue Shopping</a>
+    <div class="cart-empty text-center py-4">
+      <h3 class="text-gray mb-2">Your bag is empty</h3>
+      <p class="text-gray mb-3">Browse the collection and add a piece when it calls to you.</p>
+      <a routerLink="/shop" class="btn btn-cyan">Shop the collection</a>
     </div>
   } @else {
+    @if (isGuest) {
+      <div class="guest-banner mb-3">
+        <p class="mb-0 text-sm">
+          You can keep shopping as a guest.
+          <a routerLink="/login" [queryParams]="{ returnUrl: '/checkout' }" class="text-cyan font-bold">Sign in at checkout</a>
+          to place your order — your bag will be saved.
+        </p>
+      </div>
+    }
+
     <div class="cart-layout flex gap-3">
       <div class="cart-items flex-col gap-2" style="flex: 2;">
         @for (item of cartItems; track item.id) {
@@ -18,36 +29,47 @@
                 @if (item.selected_size) {
                   <p class="text-sm text-gray mb-0">Size: {{ item.selected_size }}</p>
                 }
-                <p class="text-cyan font-bold">${{ getPrice(item) | number:'1.2-2' }}</p>
+                <p class="text-cyan font-bold">₾{{ getPrice(item) | number:'1.2-2' }}</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
               <div class="qty-control flex items-center border radius-round">
-                <button class="qty-btn" (click)="updateQuantity(item, -1)">-</button>
+                <button type="button" class="qty-btn" (click)="updateQuantity(item, -1)" aria-label="Decrease quantity">−</button>
                 <span class="qty mx-1">{{ item.quantity }}</span>
-                <button class="qty-btn" (click)="updateQuantity(item, 1)">+</button>
+                <button type="button" class="qty-btn" (click)="updateQuantity(item, 1)" aria-label="Increase quantity">+</button>
               </div>
-              <button class="remove-btn text-gray hover-red" (click)="removeItem(item.id)">🗑️</button>
+              <button type="button" class="remove-btn text-gray hover-red" (click)="removeItem(item.id)" aria-label="Remove item">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 7h16"/>
+                  <path d="M9 7V5h6v2"/>
+                  <path d="M6 7l1 12h10l1-12"/>
+                </svg>
+              </button>
             </div>
           </div>
         }
       </div>
-      
+
       <div class="cart-summary bg-card p-3 radius-md shadow-sm border" style="flex: 1; height: fit-content;">
-        <h3 class="mb-2">Order Summary</h3>
+        <h3 class="mb-2">Order summary</h3>
         <div class="flex justify-between mb-1">
           <span class="text-gray">Subtotal</span>
-          <span class="font-bold">${{ subtotal | number:'1.2-2' }}</span>
+          <span class="font-bold">₾{{ subtotal | number:'1.2-2' }}</span>
         </div>
         <div class="flex justify-between mb-2 pb-2" style="border-bottom: 1px solid var(--border-color)">
           <span class="text-gray">Shipping</span>
-          <span class="font-bold">{{ shipping === 0 ? 'Free' : '$' + (shipping | number:'1.2-2') }}</span>
+          <span class="font-bold">{{ shipping === 0 ? 'Free' :  '₾' + (shipping | number:'1.2-2') }}</span>
         </div>
         <div class="flex justify-between mb-3">
           <span class="font-bold text-lg">Total</span>
-          <span class="font-bold text-lg text-cyan">${{ total | number:'1.2-2' }}</span>
+          <span class="font-bold text-lg text-cyan">₾{{ total | number:'1.2-2' }}</span>
         </div>
-        <a routerLink="/checkout" class="btn btn-yellow w-100 text-center">Proceed to Checkout</a>
+        <button type="button" class="btn btn-cyan w-100 text-center" (click)="checkout()">
+          {{ isGuest ? 'Sign in to checkout' : 'Proceed to checkout' }}
+        </button>
+        @if (subtotal < 200) {
+          <p class="text-sm text-gray mt-2 mb-0 text-center">Free shipping over ₾200</p>
+        }
       </div>
     </div>
   }

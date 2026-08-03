@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../core/services/cart.service';
 import { OrderService } from '../../core/services/order.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../core/services/toast.service';
 import { CartItem } from '../../core/models/cart-item.model';
 import { Subscription } from 'rxjs';
@@ -18,13 +19,13 @@ import { Subscription } from 'rxjs';
 export class CheckoutComponent implements OnInit, OnDestroy {
   cartService = inject(CartService);
   orderService = inject(OrderService);
+  authService = inject(AuthService);
   router = inject(Router);
   toastService = inject(ToastService);
 
   cartItems: CartItem[] = [];
   private sub!: Subscription;
 
-  // Form fields
   shippingName = '';
   shippingEmail = '';
   shippingAddress = '';
@@ -35,6 +36,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   isPlacingOrder = false;
 
   ngOnInit() {
+    const user = this.authService.currentUser;
+    if (user) {
+      this.shippingName = user.name || '';
+      this.shippingEmail = user.email || '';
+    }
+
     this.sub = this.cartService.cartItems$.subscribe(items => {
       this.cartItems = items;
     });
@@ -62,6 +69,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   placeOrder() {
     if (this.isPlacingOrder) return;
+
+    if (!this.shippingName || !this.shippingEmail || !this.shippingAddress || !this.shippingCity || !this.shippingZip) {
+      this.toastService.error('Please fill in all shipping details');
+      return;
+    }
+
     this.isPlacingOrder = true;
 
     this.orderService.placeOrder({
@@ -74,8 +87,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }).subscribe({
       next: (order) => {
         this.cartService.clearCart();
-        this.toastService.success('Order placed successfully! Order #' + order.id);
-        this.router.navigate(['/']);
+        this.toastService.success('Order placed — #' + order.id);
+        this.router.navigate(['/orders']);
       },
       error: (err) => {
         this.toastService.error(err.error?.message || 'Failed to place order. Please try again.');

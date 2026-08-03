@@ -1,10 +1,10 @@
 <div class="container py-4">
-  <h1 class="mb-3 text-cyan">Checkout</h1>
+  <h1 class="mb-3">Checkout</h1>
   
   @if (cartItems.length === 0) {
     <div class="text-center py-4">
-      <h3 class="text-gray mb-2">Your cart is empty!</h3>
-      <a routerLink="/shop" class="btn btn-yellow">Continue Shopping</a>
+      <h3 class="text-gray mb-2">Your bag is empty</h3>
+      <a routerLink="/shop" class="btn btn-cyan">Continue shopping</a>
     </div>
   } @else {
     <div class="checkout-layout flex gap-4">
@@ -55,20 +55,20 @@
         @for (item of cartItems; track item.id) {
           <div class="flex justify-between mb-1 pb-1 border-bottom">
             <span class="text-gray">{{ item.product.name }} (x{{ item.quantity }})</span>
-            <span class="font-bold">${{ getPrice(item) * item.quantity | number:'1.2-2' }}</span>
+            <span class="font-bold">₾{{ getPrice(item) * item.quantity | number:'1.2-2' }}</span>
           </div>
         }
         <div class="flex justify-between mb-1 pt-1">
           <span class="text-gray">Subtotal</span>
-          <span class="font-bold">${{ subtotal | number:'1.2-2' }}</span>
+          <span class="font-bold">₾{{ subtotal | number:'1.2-2' }}</span>
         </div>
         <div class="flex justify-between mb-2 pb-2 border-bottom">
           <span class="text-gray">Shipping</span>
-          <span class="font-bold">{{ shipping === 0 ? 'Free' : '$' + (shipping | number:'1.2-2') }}</span>
+          <span class="font-bold">{{ shipping === 0 ? 'Free' :  '₾' + (shipping | number:'1.2-2') }}</span>
         </div>
         <div class="flex justify-between mb-4">
           <span class="font-bold text-lg">Total</span>
-          <span class="font-bold text-lg text-cyan">${{ total | number:'1.2-2' }}</span>
+          <span class="font-bold text-lg text-cyan">₾{{ total | number:'1.2-2' }}</span>
         </div>
         
         <button class="btn btn-cyan w-100 text-center" (click)="placeOrder()" [disabled]="isPlacingOrder">
