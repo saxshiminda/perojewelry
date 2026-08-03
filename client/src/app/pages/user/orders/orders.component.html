@@ -26,7 +26,7 @@
                         'badge-pending': order.status === 'pending',
                         'badge-completed': order.status === 'completed'
                     }">{{ order.status }}</span>
-                    <div class="price mt-1">{{ order.total | currency }}</div>
+                    <div class="price mt-1">₾{{ order.total | number:'1.2-2' }}</div>
                 </div>
             </div>
 
@@ -35,7 +35,7 @@
                     <img [src]="item.product.primary_image_url" [alt]="item.product.name" class="product-thumb">
                     <div class="flex-1">
                         <h4 class="mb-0 h5">{{ item.product.name }}</h4>
-                        <p class="text-gray small">Qty: {{ item.quantity }} × {{ item.price | currency }}</p>
+                        <p class="text-gray small">Qty: {{ item.quantity }} × ₾{{ item.price | number:'1.2-2' }}</p>
                     </div>
                     <button class="btn btn-sm btn-outline" (click)="openReviewForm(item.product)">
                         Write Review

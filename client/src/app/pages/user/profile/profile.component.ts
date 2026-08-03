@@ -53,11 +53,9 @@ export class ProfileComponent implements OnInit {
         });
         if (user.image) {
           this.imageLoadError = false;
-          // If it starts with users/ or products/, prepend storage URL.
-          // Otherwise, if it starts with http, use it as is.
-          this.previewUrl = user.image.startsWith('http') 
-            ? user.image 
-            : `${this.serverApiUrl}/${user.image.replace(/^\//, '')}`;
+          this.previewUrl = user.image.startsWith('http') || user.image.startsWith('/')
+            ? user.image
+            : `/storage/${user.image.replace(/^\//, '')}`;
         } else {
           this.previewUrl = null;
         }

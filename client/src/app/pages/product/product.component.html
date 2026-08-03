@@ -25,17 +25,17 @@
         <h1 class="title-display mb-1" style="font-size: 2.25rem;">{{ product.name }}</h1>
         <div class="price-block mb-1">
           @if (product.is_on_sale) {
-            <span class="price font-bold text-cyan" style="font-size: 1.5rem;">${{ product.sale_price | number:'1.2-2' }}</span>
-            <span class="price-old" style="font-size: 1.1rem;">${{ product.price | number:'1.2-2' }}</span>
+            <span class="price font-bold text-cyan" style="font-size: 1.5rem;">₾{{ product.sale_price | number:'1.2-2' }}</span>
+            <span class="price-old" style="font-size: 1.1rem;">₾{{ product.price | number:'1.2-2' }}</span>
             <span class="sale-tag">
               @if (product.discount_type === 'percentage') {
                 -{{ product.discount_value }}%
               } @else {
-                -${{ product.discount_value | number:'1.2-2' }} off
+                -₾{{ product.discount_value | number:'1.2-2' }} off
               }
             </span>
           } @else {
-            <span class="price font-bold" style="font-size: 1.5rem;">${{ product.price | number:'1.2-2' }}</span>
+            <span class="price font-bold" style="font-size: 1.5rem;">₾{{ product.price | number:'1.2-2' }}</span>
           }
         </div>
 
@@ -78,12 +78,19 @@
 
         <div class="cart-actions flex items-center gap-2 mb-4">
           <div class="qty-selector flex items-center">
-            <button (click)="changeQuantity(-1)">-</button>
+            <button type="button" (click)="changeQuantity(-1)" aria-label="Decrease quantity">−</button>
             <input type="number" [(ngModel)]="quantity" min="1">
-            <button (click)="changeQuantity(1)">+</button>
+            <button type="button" (click)="changeQuantity(1)" aria-label="Increase quantity">+</button>
           </div>
-          <button class="btn btn-cyan btn-add-to-cart" (click)="addToCart()">Add to cart</button>
-          <button class="icon-btn" (click)="toggleFavorite()" [attr.aria-label]="isFavorite ? 'Remove favorite' : 'Add favorite'">
+          <button
+            type="button"
+            class="btn btn-cyan btn-add-to-cart"
+            (click)="addToCart()"
+            [disabled]="product.stock <= 0"
+          >
+            {{ product.stock <= 0 ? 'Out of stock' : 'Add to bag' }}
+          </button>
+          <button type="button" class="icon-btn" (click)="toggleFavorite()" [attr.aria-label]="isFavorite ? 'Remove favorite' : 'Add favorite'">
             {{ isFavorite ? '♥' : '♡' }}
           </button>
         </div>
@@ -147,6 +154,26 @@
             <app-product-card [product]="rel" style="width: 280px;"></app-product-card>
          }
       </div>
+    </div>
+  }
+
+  @if (product) {
+    <div class="mobile-sticky-cart">
+      <div class="sticky-price">
+        @if (product.is_on_sale) {
+          <span>₾{{ product.sale_price | number:'1.2-2' }}</span>
+        } @else {
+          <span>₾{{ product.price | number:'1.2-2' }}</span>
+        }
+      </div>
+      <button
+        type="button"
+        class="btn btn-cyan"
+        (click)="addToCart()"
+        [disabled]="product.stock <= 0"
+      >
+        {{ product.stock <= 0 ? 'Out of stock' : 'Add to bag' }}
+      </button>
     </div>
   }
 

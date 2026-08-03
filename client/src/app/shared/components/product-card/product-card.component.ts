@@ -68,15 +68,14 @@ export class ProductCardComponent {
       return;
     }
 
-    if (!this.authService.currentUser) {
-      this.router.navigate(['/login'], {
-        queryParams: { returnUrl: `/product/${this.product.id}` }
-      });
+    if (this.product.stock <= 0) {
+      this.toastService.error('Out of stock');
       return;
     }
 
-    this.cartService.addToCart(this.product.id!).subscribe(() => {
-      this.toastService.success('Added to cart!');
+    this.cartService.addToCart(this.product.id!, 1, '', this.product).subscribe({
+      next: () => this.toastService.success('Added to bag'),
+      error: () => this.toastService.error('Could not add to bag')
     });
   }
 
