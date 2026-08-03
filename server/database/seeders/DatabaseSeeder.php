@@ -15,12 +15,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@perojewelry.com',
-            'password' => bcrypt('password'),
-            'role' => 'admin',
-        ]);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@perojewelry.com'],
+            [
+                'name' => 'Admin User',
+                'password' => 'password',
+            ]
+        );
+        $admin->forceFill(['role' => 'admin'])->save();
 
         $this->call(ProductSeeder::class);
     }

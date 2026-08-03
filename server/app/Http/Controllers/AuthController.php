@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -18,11 +17,11 @@ class AuthController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
+        // role defaults to 'user' via migration — never accept role from the client
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-            'role' => 'user', 
+            'password' => $validatedData['password'],
         ]);
 
         Auth::login($user);

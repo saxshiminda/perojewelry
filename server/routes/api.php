@@ -11,7 +11,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\API\BlogController;
+use App\Http\Controllers\AdminStatsController;
 
 // Healthcheck / Base Route
 Route::get('/', function () {
@@ -30,10 +30,6 @@ Route::get('/user', function (Request $request) {
 Route::post('/user/profile', [UserProfileController::class, 'update'])->middleware('auth:sanctum');
 Route::put('/user/profile/password', [UserProfileController::class, 'updatePassword'])->middleware('auth:sanctum');
 
-// Blogs (public)
-Route::get('/blogs', [BlogController::class, 'index']);
-Route::get('/blogs/{id}', [BlogController::class, 'show']);
-
 // Categories (public)
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category}', [CategoryController::class, 'show']);
@@ -49,6 +45,8 @@ Route::get('/products/{product}', [ProductController::class, 'show']);
 
 // Products (admin)
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/admin/stats', [AdminStatsController::class, 'index']);
+
     Route::post('/products', [ProductController::class, 'store']);
     Route::put('/products/{product}', [ProductController::class, 'update']);
     Route::delete('/products/{product}', [ProductController::class, 'destroy']);
@@ -61,11 +59,6 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     // Image upload
     Route::post('/upload/image', [ImageUploadController::class, 'store']);
     Route::delete('/upload/image', [ImageUploadController::class, 'destroy']);
-
-    // Blogs (admin)
-    Route::post('/blogs', [BlogController::class, 'store']);
-    Route::put('/blogs/{id}', [BlogController::class, 'update']);
-    Route::delete('/blogs/{id}', [BlogController::class, 'destroy']);
 });
 
 // Cart (authenticated)
@@ -73,6 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cart', [CartController::class, 'index']);
     Route::get('/cart/count', [CartController::class, 'count']);
     Route::post('/cart', [CartController::class, 'store']);
+    Route::post('/cart/merge', [CartController::class, 'merge']);
     Route::put('/cart/{cartItem}', [CartController::class, 'update']);
     Route::delete('/cart/{cartItem}', [CartController::class, 'destroy']);
 });

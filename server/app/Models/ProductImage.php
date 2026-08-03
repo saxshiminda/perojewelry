@@ -22,11 +22,21 @@ class ProductImage extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function getImageUrlAttribute($value)
+    /**
+     * Always expose a root-relative URL so the Angular app on :4200
+     * can load images via same-origin (/images, /storage proxied to API).
+     */
+    public function getImageUrlAttribute($value): ?string
     {
-        if ($value && !str_starts_with($value, 'http')) {
-            return asset($value);
+        if (!$value) {
+            return null;
         }
-        return $value;
+
+        if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
+            $path = parse_url($value, PHP_URL_PATH);
+            return $path ?: $value;
+        }
+
+        return '/' . ltrim($value, '/');
     }
 }
