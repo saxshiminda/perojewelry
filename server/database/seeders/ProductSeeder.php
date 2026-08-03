@@ -177,19 +177,24 @@ class ProductSeeder extends Seeder
             $images = $data['images'];
             unset($data['images']);
 
-            $product = Product::create($data);
+            $product = Product::firstOrCreate(
+                ['name' => $data['name']],
+                $data
+            );
 
-            if (!empty($product->discount_type) && !empty($product->discount_value)) {
-                $product->applySaleDiscount();
-                $product->save();
-            }
+            if ($product->wasRecentlyCreated) {
+                if (!empty($product->discount_type) && !empty($product->discount_value)) {
+                    $product->applySaleDiscount();
+                    $product->save();
+                }
 
-            foreach ($images as $index => $imageData) {
-                $product->images()->create([
-                    'image_url' => $imageData['image_url'],
-                    'is_primary' => $imageData['is_primary'] ?? ($index === 0),
-                    'sort_order' => $index,
-                ]);
+                foreach ($images as $index => $imageData) {
+                    $product->images()->create([
+                        'image_url' => $imageData['image_url'],
+                        'is_primary' => $imageData['is_primary'] ?? ($index === 0),
+                        'sort_order' => $index,
+                    ]);
+                }
             }
         }
     }
