@@ -29,9 +29,10 @@ export class HeaderComponent {
 
   getUserAvatar(user: any): string {
     if (!user || !user.image) return '';
-    return user.image.startsWith('http') 
-      ? user.image 
-      : `${this.storageUrl}/${user.image.replace(/^\//, '')}`;
+    if (user.image.startsWith('http') || user.image.startsWith('/')) {
+      return user.image;
+    }
+    return `/storage/${user.image.replace(/^\//, '')}`;
   }
 
   onSearch() {

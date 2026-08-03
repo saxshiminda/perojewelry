@@ -78,6 +78,7 @@ export class AuthService {
       switchMap(() => this.http.post(`${this.apiUrl}/register`, userData, { withCredentials: true })),
       tap((res: any) => {
         this.currentUserSubject.next(res.user);
+        localStorage.setItem('perojewelry_logged_in', 'true');
       })
     );
   }
