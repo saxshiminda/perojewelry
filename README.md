@@ -9,7 +9,7 @@ docker compose up --build
 ```
 
 That’s it. On start the stack will:
-x
+
 1. Start MySQL
 2. Install PHP deps, migrate + seed, start the API
 3. Install npm deps (if needed) and start Angular
