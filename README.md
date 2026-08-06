@@ -7,6 +7,7 @@ Handmade jewelry e-shop — Angular 20 client + Laravel 13 API + MySQL.
 ```bash
 docker compose up --build
 ```
+x
 
 That’s it. On start the stack will:
 
