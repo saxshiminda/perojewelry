@@ -27,9 +27,7 @@
   display: block;
   object-fit: contain;
   border-radius: 2px;
-}
-[data-theme="light"] .logo-img {
-  box-shadow: 0 0 0 1px var(--border-color);
+  box-shadow: var(--logo-ring);
 }
 .social-icon {
   width: 36px;

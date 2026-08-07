@@ -1,20 +1,16 @@
 
 .main-header {
-  background-color: rgba(10, 10, 10, 0.85);
+  background-color: var(--header-bg);
   backdrop-filter: blur(12px);
   padding: 10px 0;
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid var(--border-color);
   transition: box-shadow var(--transition-normal), border-color var(--transition-normal), background-color var(--transition-normal);
-}
-[data-theme="light"] .main-header {
-  background-color: rgba(247, 245, 242, 0.9);
 }
 .main-header.scrolled {
   box-shadow: var(--shadow-sm);
-  border-bottom-color: var(--border-color);
 }
 .logo {
   display: flex;
@@ -27,14 +23,11 @@
   display: block;
   object-fit: contain;
   border-radius: 2px;
+  box-shadow: var(--logo-ring);
   transition: opacity var(--transition-fast), filter var(--transition-fast);
 }
 .logo:hover .logo-img {
   opacity: 0.88;
-}
-[data-theme="light"] .logo-img {
-  /* Keep black plate readable on light chrome */
-  box-shadow: 0 0 0 1px var(--border-color);
 }
 .nav-links {
   font-size: 0.9rem;
@@ -235,7 +228,7 @@
 
 .dropdown-admin-item:hover {
   color: var(--primary-yellow) !important;
-  background-color: var(--bg-dark);
+  background-color: var(--bg-light);
 }
 
 /* RESPONSIVE STYLES */
