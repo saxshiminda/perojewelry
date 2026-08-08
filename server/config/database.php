@@ -60,7 +60,11 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+                // TiDB Cloud / managed MySQL require TLS (set MYSQL_ATTR_SSL_CA or DB_SSL=true)
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA')
+                    ?: (filter_var(env('DB_SSL', false), FILTER_VALIDATE_BOOLEAN)
+                        ? base_path('certs/isrgrootx1.pem')
+                        : null),
             ]) : [],
         ],
 

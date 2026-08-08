@@ -1,0 +1,61 @@
+# Render Blueprint — free same-origin deploy (Angular + Laravel).
+# https://render.com/docs/blueprint-spec
+#
+# After create: set APP_KEY, APP_URL, SANCTUM_STATEFUL_DOMAINS, CORS/FRONTEND,
+# and DB_* when your MySQL is ready. Optionally set RUN_SEEDERS=true once.
+
+services:
+  - type: web
+    name: perojewelry
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: Pero Jewelry
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: LOG_LEVEL
+        value: error
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
+      - key: SESSION_SAME_SITE
+        value: lax
+      - key: FILESYSTEM_DISK
+        value: local
+      - key: RUN_SEEDERS
+        value: "false"
+      # Required — paste output of: php artisan key:generate --show
+      - key: APP_KEY
+        sync: false
+      # Required — e.g. https://perojewelry.onrender.com
+      - key: APP_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: SANCTUM_STATEFUL_DOMAINS
+        sync: false
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: gateway01.eu-central-1.prod.aws.tidbcloud.com
+      - key: DB_PORT
+        value: "4000"
+      - key: DB_DATABASE
+        value: pero
+      - key: DB_SSL
+        value: "true"
+      - key: MYSQL_ATTR_SSL_CA
+        value: /var/www/html/certs/isrgrootx1.pem
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_URL
+        sync: false

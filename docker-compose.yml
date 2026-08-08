@@ -1,5 +1,7 @@
 services:
+  # Optional local MySQL: docker compose --profile local-db up
   db:
+    profiles: ["local-db"]
     image: mysql:8.0
     container_name: perojewelry_db
     environment:
@@ -28,22 +30,18 @@ services:
     container_name: perojewelry_server
     ports:
       - "8000:8000"
+    env_file:
+      - ./server/.env
     environment:
       APP_ENV: local
       APP_DEBUG: "true"
       APP_URL: http://localhost:8000
-      DB_CONNECTION: mysql
-      DB_HOST: db
-      DB_PORT: "3306"
-      DB_DATABASE: perojewelry
-      DB_USERNAME: perojewelry_user
-      DB_PASSWORD: secretpassword
+      # TiDB TLS CA path inside the container (repo is mounted at /var/www/html)
+      DB_SSL: "true"
+      MYSQL_ATTR_SSL_CA: /var/www/html/certs/isrgrootx1.pem
       SANCTUM_STATEFUL_DOMAINS: localhost:4200,127.0.0.1:4200,localhost:8000,127.0.0.1:8000
     volumes:
       - ./server:/var/www/html
-    depends_on:
-      db:
-        condition: service_healthy
     networks:
       - perojewelry_network
 
