@@ -1,21 +1,21 @@
 {
   "/api": {
-    "target": "http://localhost:8000",
+    "target": "http://localhost:8001",
     "secure": false,
     "changeOrigin": true
   },
   "/sanctum": {
-    "target": "http://localhost:8000",
+    "target": "http://localhost:8001",
     "secure": false,
     "changeOrigin": true
   },
   "/storage": {
-    "target": "http://localhost:8000",
+    "target": "http://localhost:8001",
     "secure": false,
     "changeOrigin": true
   },
   "/images": {
-    "target": "http://localhost:8000",
+    "target": "http://localhost:8001",
     "secure": false,
     "changeOrigin": true
   }

@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ProductService } from '../../../../core/services/product.service';
 import { CategoryService, Category } from '../../../../core/services/category.service';
+import { environment } from '../../../../../environments/environment';
 
 interface ImageEntry {
   image_url: string;
@@ -120,7 +121,7 @@ export class ProductFormComponent implements OnInit {
       const formData = new FormData();
       formData.append('image', file);
 
-      this.http.post<{ image_url: string }>('/api/upload/image', formData, { withCredentials: true }).subscribe({
+      this.http.post<{ image_url: string }>(`${environment.apiUrl}/upload/image`, formData, { withCredentials: true }).subscribe({
         next: (res) => {
           const isFirst = this.images.length === 0;
           this.images.push({ image_url: res.image_url, is_primary: isFirst });

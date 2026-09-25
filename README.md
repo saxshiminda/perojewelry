@@ -13,7 +13,7 @@ docker compose up --build
 | Service | URL |
 |---------|-----|
 | Shop | http://localhost:4200 |
-| API | http://localhost:8000 |
+| API | http://localhost:8001 |
 
 Optional local MySQL instead of TiDB:
 

@@ -24,7 +24,7 @@ export class AuthService {
   public isInitialized$ = this.isInitializedSubject.asObservable();
   
   private apiUrl = environment.apiUrl;
-  private sanctumUrl = '/sanctum/csrf-cookie';
+  private sanctumUrl = `${environment.apiUrl.replace(/\/api\/?$/, '')}/sanctum/csrf-cookie`;
 
   constructor() {
     this.initAuth();

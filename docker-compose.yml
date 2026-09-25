@@ -29,17 +29,19 @@ services:
       dockerfile: Dockerfile
     container_name: perojewelry_server
     ports:
-      - "8000:8000"
+      # 8001 on the host: 8000 is often already taken by another local stack.
+      - "8001:8000"
     env_file:
       - ./server/.env
     environment:
       APP_ENV: local
       APP_DEBUG: "true"
-      APP_URL: http://localhost:8000
-      # TiDB TLS CA path inside the container (repo is mounted at /var/www/html)
-      DB_SSL: "true"
-      MYSQL_ATTR_SSL_CA: /var/www/html/certs/isrgrootx1.pem
-      SANCTUM_STATEFUL_DOMAINS: localhost:4200,127.0.0.1:4200,localhost:8000,127.0.0.1:8000
+      APP_URL: http://localhost:8001
+      # Reach the compose MySQL service. 127.0.0.1 inside this container is not the db.
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_SSL: "false"
+      SANCTUM_STATEFUL_DOMAINS: localhost:4200,127.0.0.1:4200,localhost:8001,127.0.0.1:8001
     volumes:
       - ./server:/var/www/html
     networks:

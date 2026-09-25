@@ -5,6 +5,7 @@ import { Order } from '../../../core/models/order.model';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../../../core/services/toast.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-orders',
@@ -60,7 +61,7 @@ export class OrdersComponent implements OnInit {
     if (!this.selectedProduct) return;
     
     this.submittingReview = true;
-    const url = `/api/products/${this.selectedProduct.id}/reviews`;
+    const url = `${environment.apiUrl}/products/${this.selectedProduct.id}/reviews`;
     const payload = {
       rating: this.reviewRating,
       comment: this.reviewComment
