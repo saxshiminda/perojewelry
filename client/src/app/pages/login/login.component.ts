@@ -19,10 +19,11 @@ export class LoginComponent {
   email = '';
   password = '';
   errorMessage = '';
+  remember: boolean = false;
 
   onSubmit() {
     this.errorMessage = '';
-    this.authService.login({ email: this.email, password: this.password }).subscribe({
+    this.authService.login({ email: this.email, password: this.password, remember: this.remember }).subscribe({
       next: () => {
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/';
         this.router.navigateByUrl(returnUrl);
