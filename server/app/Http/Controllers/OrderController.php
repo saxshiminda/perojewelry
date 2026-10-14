@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+    private const STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+
     public function index(Request $request)
     {
         $orders = Order::with('items.product.images')
@@ -29,14 +31,53 @@ class OrderController extends Controller
         return response()->json($order->load('items.product.images'));
     }
 
+    public function adminIndex(Request $request)
+    {
+        $query = Order::with(['items.product', 'user'])->latest();
+
+        $status = $request->query('status');
+        if (is_string($status) && in_array($status, self::STATUSES, true)) {
+            $query->where('status', $status);
+        }
+
+        $search = trim((string) $request->query('search', ''));
+        if ($search !== '') {
+            $query->where(function ($builder) use ($search) {
+                $builder->where('shipping_name', 'like', "%{$search}%")
+                    ->orWhere('shipping_email', 'like', "%{$search}%");
+
+                if (ctype_digit($search)) {
+                    $builder->orWhere('id', (int) $search);
+                }
+            });
+        }
+
+        return response()->json($query->paginate(15));
+    }
+
+    public function updateStatus(Request $request, Order $order)
+    {
+        $validated = $request->validate([
+            'status' => 'required|string|in:pending,processing,shipped,delivered,cancelled',
+        ]);
+
+        $order->update(['status' => $validated['status']]);
+
+        return response()->json($order->load(['items.product', 'user']));
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'shipping_name' => 'required|string|max:255',
             'shipping_email' => 'required|email',
-            'shipping_address' => 'required|string',
-            'shipping_city' => 'required|string',
-            'shipping_zip' => 'required|string',
+            'shipping_phone' => 'required|string|max:50',
+            'shipping_country' => 'required|string|max:255',
+            'shipping_city' => 'required|string|max:255',
+            'shipping_street' => 'required|string|max:255',
+            'shipping_building' => 'required|string|max:255',
+            'shipping_apartment' => 'nullable|string|max:255',
+            'shipping_zip' => 'required|string|max:32',
             'payment_method' => 'required|string|in:credit_card,paypal',
         ]);
 
@@ -70,16 +111,27 @@ class OrderController extends Controller
             $shipping = $subtotal > 200 ? 0 : 15;
             $total = $subtotal + $shipping;
 
+            $addressParts = array_values(array_filter([
+                $validated['shipping_street'],
+                $validated['shipping_building'],
+                $validated['shipping_apartment'] ?? null,
+            ], fn ($part) => is_string($part) && trim($part) !== ''));
+
             // Create order
             $order = Order::create([
                 'user_id' => $user->id,
-                'status' => 'completed',
+                'status' => 'pending',
                 'subtotal' => $subtotal,
                 'shipping' => $shipping,
                 'total' => $total,
                 'shipping_name' => $validated['shipping_name'],
                 'shipping_email' => $validated['shipping_email'],
-                'shipping_address' => $validated['shipping_address'],
+                'shipping_phone' => $validated['shipping_phone'],
+                'shipping_country' => $validated['shipping_country'],
+                'shipping_address' => implode(', ', $addressParts),
+                'shipping_street' => $validated['shipping_street'],
+                'shipping_building' => $validated['shipping_building'],
+                'shipping_apartment' => $validated['shipping_apartment'] ?? null,
                 'shipping_city' => $validated['shipping_city'],
                 'shipping_zip' => $validated['shipping_zip'],
                 'payment_method' => $validated['payment_method'],

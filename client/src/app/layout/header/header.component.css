@@ -79,7 +79,7 @@
 }
 .btn-register {
   background-color: var(--accent);
-  color: white;
+  color: var(--accent-contrast);
 }
 .btn-register:hover {
   background-color: var(--accent-hover);
@@ -108,7 +108,7 @@
   top: -2px;
   right: -4px;
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-contrast);
   border-radius: 50%;
   min-width: 18px;
   height: 18px;
@@ -125,7 +125,7 @@
   height: 38px;
   border-radius: 50%;
   background-color: var(--accent);
-  color: #fff;
+  color: var(--accent-contrast);
   display: flex;
   align-items: center;
   justify-content: center;

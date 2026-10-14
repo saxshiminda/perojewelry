@@ -1,7 +1,16 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { PaginatedResponse } from '../models/paginated-response.model';
 import { environment } from '../../../environments/environment';
+
+export interface AdminCustomer {
+  id: number;
+  name: string;
+  email: string;
+  orders_count: number;
+  created_at: string;
+}
 
 export interface AdminStats {
   total_products: number;
@@ -19,5 +28,12 @@ export class AdminStatsService {
 
   getStats(): Observable<AdminStats> {
     return this.http.get<AdminStats>(this.apiUrl, { withCredentials: true });
+  }
+
+  getCustomers(filters: { page?: number; search?: string }): Observable<PaginatedResponse<AdminCustomer>> {
+    let params = new HttpParams();
+    if (filters.page) params = params.set('page', filters.page);
+    if (filters.search) params = params.set('search', filters.search);
+    return this.http.get<PaginatedResponse<AdminCustomer>>(`${environment.apiUrl}/admin/customers`, { params });
   }
 }

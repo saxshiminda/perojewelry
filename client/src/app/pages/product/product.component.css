@@ -74,6 +74,7 @@
 }
 .social-icon:hover {
   background: var(--primary-cyan);
+  color: var(--accent-contrast);
 }
 
 .qty-selector {
@@ -129,7 +130,7 @@
 }
 .icon-btn:hover {
   background: var(--primary-cyan);
-  color: white;
+  color: var(--accent-contrast);
   border-color: var(--primary-cyan);
 }
 .hover-cyan:hover { color: var(--primary-cyan); }

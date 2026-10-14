@@ -19,16 +19,16 @@ class ReviewController extends Controller
     {
         $user = $request->user();
 
-        // Ensure user has ordered this product
-        $hasOrdered = $user->orders()
+        $hasDelivered = $user->orders()
+            ->where('status', 'delivered')
             ->whereHas('items', function ($query) use ($product) {
                 $query->where('product_id', $product->id);
             })
             ->exists();
 
-        if (!$hasOrdered) {
+        if (!$hasDelivered) {
             return response()->json([
-                'message' => 'You can only review products you have purchased.'
+                'message' => 'You can review this piece once it has been delivered.'
             ], 403);
         }
 

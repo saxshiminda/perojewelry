@@ -16,9 +16,9 @@
 }
 .btn-cyan {
   background-color: var(--primary-cyan);
-  color: white;
+  color: var(--accent-contrast);
 }
 .btn-yellow {
   background-color: var(--primary-yellow);
-  color: var(--text-dark);
+  color: var(--accent-contrast);
 }

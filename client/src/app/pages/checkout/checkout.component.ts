@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -22,18 +22,24 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   authService = inject(AuthService);
   router = inject(Router);
   toastService = inject(ToastService);
+  private host = inject(ElementRef);
 
   cartItems: CartItem[] = [];
   private sub!: Subscription;
 
   shippingName = '';
   shippingEmail = '';
-  shippingAddress = '';
+  shippingPhone = '';
+  shippingCountry = '';
   shippingCity = '';
+  shippingStreet = '';
+  shippingBuilding = '';
+  shippingApartment = '';
   shippingZip = '';
   paymentMethod = 'credit_card';
 
   isPlacingOrder = false;
+  submitted = false;
 
   ngOnInit() {
     const user = this.authService.currentUser;
@@ -67,22 +73,61 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     return item.product?.effective_price ?? item.product?.price ?? 0;
   }
 
+  errorFor(field: string): string | null {
+    if (!this.submitted || field === 'apartment') return null;
+
+    const value = this.valueFor(field).trim();
+    if (!value) return 'Required';
+    if (field === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      return 'Enter a valid email';
+    }
+    return null;
+  }
+
+  private valueFor(field: string): string {
+    switch (field) {
+      case 'name': return this.shippingName;
+      case 'email': return this.shippingEmail;
+      case 'phone': return this.shippingPhone;
+      case 'country': return this.shippingCountry;
+      case 'city': return this.shippingCity;
+      case 'street': return this.shippingStreet;
+      case 'building': return this.shippingBuilding;
+      case 'zip': return this.shippingZip;
+      default: return '';
+    }
+  }
+
+  private get hasFieldErrors(): boolean {
+    return ['name', 'email', 'phone', 'country', 'city', 'street', 'building', 'zip']
+      .some(field => this.errorFor(field));
+  }
+
   placeOrder() {
     if (this.isPlacingOrder) return;
 
-    if (!this.shippingName || !this.shippingEmail || !this.shippingAddress || !this.shippingCity || !this.shippingZip) {
+    this.submitted = true;
+    if (this.hasFieldErrors) {
       this.toastService.error('Please fill in all shipping details');
+      setTimeout(() => {
+        const invalid = this.host.nativeElement.querySelector('.is-invalid') as HTMLElement | null;
+        invalid?.focus();
+      });
       return;
     }
 
     this.isPlacingOrder = true;
 
     this.orderService.placeOrder({
-      shipping_name: this.shippingName,
-      shipping_email: this.shippingEmail,
-      shipping_address: this.shippingAddress,
-      shipping_city: this.shippingCity,
-      shipping_zip: this.shippingZip,
+      shipping_name: this.shippingName.trim(),
+      shipping_email: this.shippingEmail.trim(),
+      shipping_phone: this.shippingPhone.trim(),
+      shipping_country: this.shippingCountry.trim(),
+      shipping_city: this.shippingCity.trim(),
+      shipping_street: this.shippingStreet.trim(),
+      shipping_building: this.shippingBuilding.trim(),
+      shipping_apartment: this.shippingApartment.trim() || undefined,
+      shipping_zip: this.shippingZip.trim(),
       payment_method: this.paymentMethod,
     }).subscribe({
       next: (order) => {

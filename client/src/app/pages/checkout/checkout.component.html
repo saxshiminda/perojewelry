@@ -11,28 +11,72 @@
       <div class="billing-details flex-col gap-3" style="flex: 2;">
         <div class="bg-card p-4 radius-lg shadow-sm border">
           <h3 class="mb-2">Billing Details</h3>
-          <form class="flex-col gap-2">
+          <form class="flex-col gap-2" (ngSubmit)="placeOrder()">
             <div class="form-group pb-1">
-              <label class="font-bold mb-1">Full Name</label>
-              <input type="text" class="form-control" placeholder="Jane Doe" [(ngModel)]="shippingName" name="name">
-            </div>
-            <div class="form-group pb-1">
-              <label class="font-bold mb-1">Email Address</label>
-              <input type="email" class="form-control" placeholder="jane&#64;example.com" [(ngModel)]="shippingEmail" name="email">
-            </div>
-            <div class="form-group pb-1">
-              <label class="font-bold mb-1">Shipping Address</label>
-              <input type="text" class="form-control" placeholder="12 Atelier Lane" [(ngModel)]="shippingAddress" name="address">
+              <label class="font-bold mb-1" for="shipping-name">Full Name</label>
+              <input id="shipping-name" type="text" class="form-control" [class.is-invalid]="!!errorFor('name')" placeholder="Jane Doe" [(ngModel)]="shippingName" name="name">
+              @if (errorFor('name'); as message) {
+                <p class="field-error">{{ message }}</p>
+              }
             </div>
             <div class="flex gap-2">
               <div class="form-group pb-1" style="flex: 1;">
-                <label class="font-bold mb-1">City</label>
-                <input type="text" class="form-control" placeholder="City" [(ngModel)]="shippingCity" name="city">
+                <label class="font-bold mb-1" for="shipping-email">Email</label>
+                <input id="shipping-email" type="email" class="form-control" [class.is-invalid]="!!errorFor('email')" placeholder="jane&#64;example.com" [(ngModel)]="shippingEmail" name="email">
+                @if (errorFor('email'); as message) {
+                  <p class="field-error">{{ message }}</p>
+                }
               </div>
               <div class="form-group pb-1" style="flex: 1;">
-                <label class="font-bold mb-1">Zip Code</label>
-                <input type="text" class="form-control" placeholder="12345" [(ngModel)]="shippingZip" name="zip">
+                <label class="font-bold mb-1" for="shipping-phone">Telephone</label>
+                <input id="shipping-phone" type="tel" class="form-control" [class.is-invalid]="!!errorFor('phone')" placeholder="+995 555 123 456" [(ngModel)]="shippingPhone" name="phone">
+                @if (errorFor('phone'); as message) {
+                  <p class="field-error">{{ message }}</p>
+                }
               </div>
+            </div>
+            <div class="flex gap-2">
+              <div class="form-group pb-1" style="flex: 1;">
+                <label class="font-bold mb-1" for="shipping-country">Country</label>
+                <input id="shipping-country" type="text" class="form-control" [class.is-invalid]="!!errorFor('country')" placeholder="Georgia" [(ngModel)]="shippingCountry" name="country">
+                @if (errorFor('country'); as message) {
+                  <p class="field-error">{{ message }}</p>
+                }
+              </div>
+              <div class="form-group pb-1" style="flex: 1;">
+                <label class="font-bold mb-1" for="shipping-city">City</label>
+                <input id="shipping-city" type="text" class="form-control" [class.is-invalid]="!!errorFor('city')" placeholder="Tbilisi" [(ngModel)]="shippingCity" name="city">
+                @if (errorFor('city'); as message) {
+                  <p class="field-error">{{ message }}</p>
+                }
+              </div>
+            </div>
+            <div class="form-group pb-1">
+              <label class="font-bold mb-1" for="shipping-street">Street</label>
+              <input id="shipping-street" type="text" class="form-control" [class.is-invalid]="!!errorFor('street')" placeholder="Rustaveli Avenue" [(ngModel)]="shippingStreet" name="street">
+              @if (errorFor('street'); as message) {
+                <p class="field-error">{{ message }}</p>
+              }
+            </div>
+            <div class="flex gap-2">
+              <div class="form-group pb-1" style="flex: 1;">
+                <label class="font-bold mb-1" for="shipping-building">Building</label>
+                <input id="shipping-building" type="text" class="form-control" [class.is-invalid]="!!errorFor('building')" placeholder="12" [(ngModel)]="shippingBuilding" name="building">
+                @if (errorFor('building'); as message) {
+                  <p class="field-error">{{ message }}</p>
+                }
+              </div>
+              <div class="form-group pb-1" style="flex: 1;">
+                <label class="font-bold mb-1" for="shipping-apartment">Apartment</label>
+                <input id="shipping-apartment" type="text" class="form-control" placeholder="Optional" [(ngModel)]="shippingApartment" name="apartment">
+              </div>
+            </div>
+            <div class="form-group pb-1">
+              <label class="font-bold mb-1" for="shipping-zip">Post code</label>
+              <input id="shipping-zip" type="text" class="form-control" [class.is-invalid]="!!errorFor('zip')" placeholder="0108" [(ngModel)]="shippingZip" name="zip">
+              @if (errorFor('zip'); as message) {
+                <p class="field-error">{{ message }}</p>
+              }
             </div>
           </form>
         </div>

@@ -5,6 +5,9 @@
   .checkout-layout {
     flex-direction: column-reverse;
   }
+  .billing-details .flex.gap-2 {
+    flex-direction: column;
+  }
 }
 .border {
   border: 1px solid var(--border-color);
@@ -40,10 +43,10 @@
 }
 .btn-yellow {
   background-color: var(--primary-yellow);
-  color: var(--text-dark);
+  color: var(--accent-contrast);
 }
 .btn-cyan {
   background-color: var(--primary-cyan);
-  color: white;
+  color: var(--accent-contrast);
 }
 .w-100 { width: 100%; }

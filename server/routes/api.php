@@ -12,6 +12,7 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdminStatsController;
+use App\Http\Controllers\AdminCustomerController;
 
 // Healthcheck / Base Route
 Route::get('/', function () {
@@ -46,6 +47,9 @@ Route::get('/products/{product}', [ProductController::class, 'show']);
 // Products (admin)
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/admin/stats', [AdminStatsController::class, 'index']);
+    Route::get('/admin/orders', [OrderController::class, 'adminIndex']);
+    Route::patch('/admin/orders/{order}', [OrderController::class, 'updateStatus']);
+    Route::get('/admin/customers', [AdminCustomerController::class, 'index']);
 
     Route::post('/products', [ProductController::class, 'store']);
     Route::put('/products/{product}', [ProductController::class, 'update']);

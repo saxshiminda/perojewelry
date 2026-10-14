@@ -11,8 +11,19 @@
     border-bottom: 1px dashed var(--border-color);
 }
 
-.badge-pending { background-color: var(--primary-yellow); color: var(--text-dark); }
-.badge-completed { background-color: var(--soft-green); color: var(--text-dark); }
+.badge-pending,
+.badge-processing,
+.badge-shipped,
+.badge-cancelled {
+    background: transparent;
+    color: var(--text-dark);
+    border: 1px solid var(--border-strong);
+}
+.badge-delivered {
+    background: var(--text-dark);
+    color: var(--bg-color);
+    border: 1px solid var(--text-dark);
+}
 
 .modal-overlay {
     position: fixed;

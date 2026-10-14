@@ -108,7 +108,7 @@
 }
 .page-btn.active {
   background: var(--primary-cyan);
-  color: white;
+  color: var(--accent-contrast);
   border-color: var(--primary-cyan);
 }
 

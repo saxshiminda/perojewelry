@@ -12,10 +12,12 @@
   <div class="admin-card mb-2">
     <div class="flex gap-2 flex-wrap items-center">
       <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search products..." class="form-control flex-1" style="min-width: 200px;">
-      <select [(ngModel)]="categoryId" (change)="onCategoryChange()" class="form-control" style="width: 200px;">
-        <option value="">All Categories</option>
-        <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
-      </select>
+      <div class="select-wrap" style="width: 200px;">
+        <select [(ngModel)]="categoryId" (change)="onCategoryChange()" class="form-control form-select">
+          <option value="">All Categories</option>
+          <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+        </select>
+      </div>
       <button class="btn btn-cyan" (click)="onSearch()">Search</button>
     </div>
   </div>

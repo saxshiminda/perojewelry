@@ -1,0 +1,7 @@
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.status-select {
+  min-width: 160px;
+}
